@@ -52,7 +52,8 @@ def answer_question(question, top_k=2):
     ]
 
     # Ask LLM
-    answer = ask_llm(context, question)
+    answer = ask_llm(context, question) or "the question is irrelavant"
+
 
     # Confidence score (inverse average distance)
     confidence = round(1 / (1 + sum(distances) / len(distances)), 4)
