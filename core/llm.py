@@ -1,18 +1,15 @@
 import subprocess
 
-MODEL_NAME = "qwen2.5:3b"
+MODEL_NAME = "mistral:7b-instruct"
 
-def ask_llm(context, question):
-    """
-    Calls Ollama directly via CLI for maximum stability on Windows
-    """
 
+def ask_llm_stream(context, question):
     prompt = f"""
 You are a PDF Analysis expert.
 
 Rules:
 - Answer ONLY from the given context.
-- If the answer is not present, reply exactly: the question is irrelavant
+- If not answerable, reply exactly: the question is irrelavant
 - No reasoning, no explanations, no markdown.
 
 Context:
@@ -25,25 +22,26 @@ Answer:
 """.strip()
 
     try:
-        process = subprocess.run(
+        process = subprocess.Popen(
             ["ollama", "run", MODEL_NAME],
-            input=prompt,
-            capture_output=True,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.DEVNULL,
             text=True,
-            encoding="utf-8",
-            errors="ignore",
-            timeout=180
+            bufsize=1
         )
 
-        output = process.stdout.strip()
+        # Send prompt
+        process.stdin.write(prompt)
+        process.stdin.close()
 
-        if not output:
-            return "the question is irrelavant"
+        # Stream tokens line-by-line
+        for line in process.stdout:
+            if line.strip():
+                yield line
 
-        return output
+        process.stdout.close()
+        process.wait()
 
-    except subprocess.TimeoutExpired:
-        return "LLM timeout error"
-
-    except Exception as e:
-        return f"LLM error: {str(e)}"
+    except Exception:
+        yield "the question is irrelavant"

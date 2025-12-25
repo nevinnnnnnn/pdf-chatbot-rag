@@ -1,5 +1,5 @@
 from core.embeddings import load_vector_store, similarity_search
-from core.llm import ask_llm
+from core.llm import ask_llm_stream
 from core.analytics_logger import log_interaction
 
 
@@ -59,7 +59,7 @@ def answer_question(question, top_k=2):
 
     # Ask LLM safely
     try:
-        answer = ask_llm(context, question)
+        answer_stream = ask_llm_stream(context, question)
         if not answer or not answer.strip():
             answer = "The question is irrelevant."
     except Exception as e:
@@ -77,6 +77,6 @@ def answer_question(question, top_k=2):
     )
 
     return {
-        "answer": answer,
+        "answer_stream": answer_stream,
         "sources": sources
     }

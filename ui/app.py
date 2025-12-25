@@ -1,6 +1,5 @@
 import sys
 import os
-import time
 import base64
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
@@ -51,12 +50,10 @@ if st.session_state.dark_mode:
 with st.sidebar:
     st.header("Controls")
 
-    # Dark mode toggle
     st.session_state.dark_mode = st.toggle(
         "Dark Mode", value=st.session_state.dark_mode
     )
 
-    # Clear chat
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
 
@@ -86,7 +83,6 @@ with st.sidebar:
     if st.session_state.pdf_indexed:
         st.success("PDF ready for chat")
 
-        # 📄 PDF Preview
         with open(st.session_state.pdf_path, "rb") as f:
             pdf_base64 = base64.b64encode(f.read()).decode("utf-8")
 
@@ -113,7 +109,6 @@ if st.session_state.pdf_indexed:
     user_input = st.chat_input("Ask a question about the PDF...")
 
     if user_input:
-        # Save user message
         st.session_state.messages.append({
             "role": "user",
             "content": user_input
@@ -122,30 +117,26 @@ if st.session_state.pdf_indexed:
         with st.chat_message("user"):
             st.markdown(user_input)
 
-        # Assistant response
         with st.chat_message("assistant"):
             placeholder = st.empty()
+            full_answer = ""
 
-            with st.spinner("Thinking..."):
-                try:
-                    response = answer_question(user_input)
-                except Exception as e:
-                    response = {
-                        "answer": "Something went wrong while processing your question.",
-                        "sources": [],
-                        "confidence": 0.0
-                    }
+            try:
+                response = answer_question(user_input)
+                answer_stream = response["answer_stream"]
+                sources = response.get("sources", [])
+                confidence = response.get("confidence", None)
 
-            answer = response.get("answer", "No response generated.")
-            sources = response.get("sources", [])
-            confidence = response.get("confidence", None)
+                # 🔥 REAL TOKEN STREAMING
+                for token in answer_stream:
+                    full_answer += token
+                    placeholder.markdown(full_answer)
 
-            # Typing animation
-            typed_text = ""
-            for word in answer.split():
-                typed_text += word + " "
-                placeholder.markdown(typed_text)
-                time.sleep(0.03)
+            except Exception as e:
+                full_answer = "Something went wrong while processing your question."
+                placeholder.markdown(full_answer)
+                sources = []
+                confidence = 0.0
 
             if confidence is not None:
                 st.caption(f"Confidence: {confidence}")
@@ -155,10 +146,9 @@ if st.session_state.pdf_indexed:
                     for src in sources:
                         st.write(f"Page {src['page']} (distance: {src['distance']})")
 
-        # Save assistant message
         st.session_state.messages.append({
             "role": "assistant",
-            "content": answer,
+            "content": full_answer,
             "sources": sources,
             "confidence": confidence
         })
