@@ -17,7 +17,7 @@ st.set_page_config(
     layout="centered"
 )
 
-st.title("📄 PDF Question Answering Chatbot")
+st.title("PDF Question Answering Chatbot")
 st.write("Upload a PDF and ask questions based only on its content.")
 
 # Ensure upload directory exists
@@ -50,10 +50,10 @@ if uploaded_file:
         with st.spinner("Thinking..."):
             response = answer_question(question)
 
-        st.subheader("📌 Answer")
+        st.subheader("Answer")
         st.write(response["answer"])
 
-        st.subheader("📚 Sources")
+        st.subheader("Sources")
         if response.get("sources"):
             for src in response["sources"]:
                 st.write(f"Page {src['page']} (distance: {src['distance']})")

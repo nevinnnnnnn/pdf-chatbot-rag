@@ -30,7 +30,7 @@ def answer_question(question, top_k=3):
 
     # Build context for LLM + deduplicate sources by page
     context = ""
-    sources_dict = {}   # key = page, value = best (lowest) distance
+    sources_dict = {}   
     distances = []
 
     for r in results:

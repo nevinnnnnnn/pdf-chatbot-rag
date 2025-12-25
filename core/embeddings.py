@@ -4,7 +4,6 @@ import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-# Load embedding model (free & open-source)
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 

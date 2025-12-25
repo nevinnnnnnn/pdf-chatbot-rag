@@ -47,7 +47,7 @@ st.line_chart(timeline)
 st.divider()
 
 # --- Recent Questions ---
-st.subheader("🕒 Recent Questions")
+st.subheader("Recent Questions")
 
 st.dataframe(
     df[["timestamp", "question"]]
@@ -68,10 +68,10 @@ selected = st.selectbox(
 
 row = df[df["question"] == selected].iloc[-1]
 
-st.markdown("### 🧠 Answer")
+st.markdown("### Answer")
 st.write(row["answer"])
 
-st.markdown("### 📚 Sources")
+st.markdown("### Sources")
 if row["sources"]:
     for src in row["sources"]:
         st.write(f"Page {src['page']} (distance: {src['distance']})")

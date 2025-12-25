@@ -10,7 +10,7 @@ def ask_llm(context, question):
     """
 
     prompt = f"""
-You are a PDF Analysis Assistant.
+You are a PDF Analysis Assistant who can answer any question in context to the pdf in short and simple format.
 
 Your task:
 - Answer user questions strictly using the content provided from the PDF.
