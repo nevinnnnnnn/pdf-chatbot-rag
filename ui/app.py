@@ -1,9 +1,12 @@
 import sys
 import os
+import time
+import base64
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 import streamlit as st
+import streamlit.components.v1 as components
 
 from core.pdf_processor import process_pdf
 from core.embeddings import create_vector_store
@@ -11,51 +14,136 @@ from core.qa_engine import answer_question
 
 UPLOAD_DIR = "data/uploads"
 
+# ---------------- Page Config ----------------
 st.set_page_config(
     page_title="PDF Chatbot",
     page_icon="📄",
     layout="centered"
 )
 
-st.title("PDF Question Answering Chatbot")
-st.write("Upload a PDF and ask questions based only on its content.")
+st.title("PDF Chatbot")
+st.caption("Please don't ask irrelevant questions or the name of the 6th prime minister of India")
 
-# Ensure upload directory exists
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# --- PDF Upload ---
-uploaded_file = st.file_uploader("Upload a PDF file", type=["pdf"])
+# ---------------- Session State ----------------
+if "pdf_indexed" not in st.session_state:
+    st.session_state.pdf_indexed = False
 
-if uploaded_file:
-    pdf_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    # Save uploaded PDF
-    with open(pdf_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
+if "dark_mode" not in st.session_state:
+    st.session_state.dark_mode = False
 
-    st.success("PDF uploaded successfully!")
+# ---------------- Dark Mode CSS ----------------
+if st.session_state.dark_mode:
+    st.markdown(
+        """
+        <style>
+        body { background-color: #0f172a; color: white; }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
-    # Process & index PDF
-    with st.spinner("Processing and indexing document..."):
-        documents = process_pdf(pdf_path)
-        create_vector_store(documents)
+# ---------------- Sidebar ----------------
+with st.sidebar:
+    st.header("Controls")
 
-    st.success("Document indexed. You can now ask questions!")
+    #Dark mode toggle
+    st.session_state.dark_mode = st.toggle("Dark Mode", value=st.session_state.dark_mode)
+
+    #Clear chat
+    if st.button("🧹 Clear Chat"):
+        st.session_state.messages = []
+
     st.divider()
+    st.header("Upload PDF")
 
-    # --- Question Answering ---
-    question = st.text_input("Ask a question about the document:")
+    uploaded_file = st.file_uploader(
+        "Upload a PDF",
+        type=["pdf"],
+        help="Upload once, then start chatting"
+    )
 
-    if question:
-        with st.spinner("Thinking..."):
-            response = answer_question(question)
+    if uploaded_file and not st.session_state.pdf_indexed:
+        pdf_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
 
-        st.subheader("Answer")
-        st.write(response["answer"])
+        with open(pdf_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
 
-        st.subheader("Sources")
-        if response.get("sources"):
-            for src in response["sources"]:
-                st.write(f"Page {src['page']} (distance: {src['distance']})")
-        else:
-            st.write("No sources available.")
+        with st.spinner("Processing and indexing PDF..."):
+            documents = process_pdf(pdf_path)
+            create_vector_store(documents)
+
+        st.session_state.pdf_indexed = True
+        st.session_state.pdf_path = pdf_path
+        st.success("PDF indexed successfully!")
+
+    if st.session_state.pdf_indexed:
+        st.success("PDF ready for chat")
+
+        # 📄 PDF Preview
+        with open(st.session_state.pdf_path, "rb") as f:
+            pdf_base64 = base64.b64encode(f.read()).decode("utf-8")
+
+        components.iframe(
+            src=f"data:application/pdf;base64,{pdf_base64}",
+            height=400
+        )
+
+# ---------------- Chat History ----------------
+for msg in st.session_state.messages:
+    with st.chat_message(msg["role"]):
+        st.markdown(msg["content"])
+
+        if msg["role"] == "assistant" and msg.get("sources"):
+            with st.expander("Sources"):
+                for src in msg["sources"]:
+                    st.write(f"Page {src['page']} (distance: {src['distance']})")
+
+# ---------------- Chat Input ----------------
+if st.session_state.pdf_indexed:
+    user_input = st.chat_input("Ask a question about the PDF...")
+
+    if user_input:
+        # User message
+        st.session_state.messages.append({
+            "role": "user",
+            "content": user_input
+        })
+
+        with st.chat_message("user"):
+            st.markdown(user_input)
+
+        # Assistant response with typing effect
+        with st.chat_message("assistant"):
+            placeholder = st.empty()
+
+            with st.spinner("Thinking..."):
+                response = answer_question(user_input)
+
+            answer = response["answer"]
+            sources = response.get("sources", [])
+
+            typed_text = ""
+            for word in answer.split():
+                typed_text += word + " "
+                placeholder.markdown(typed_text)
+                time.sleep(0.03)
+
+            if sources:
+                with st.expander("Sources"):
+                    for src in sources:
+                        st.write(f"Page {src['page']} (distance: {src['distance']})")
+
+        # Save assistant message
+        st.session_state.messages.append({
+            "role": "assistant",
+            "content": answer,
+            "sources": sources
+        })
+
+else:
+    st.info("Upload a PDF from the sidebar to start chatting.")

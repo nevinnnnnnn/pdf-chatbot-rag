@@ -3,7 +3,7 @@ from core.llm import ask_llm
 from core.analytics_logger import log_interaction
 
 
-def answer_question(question, top_k=3):
+def answer_question(question, top_k=2):
     """
     Answers a question using FAISS retrieval + LLM
     """
