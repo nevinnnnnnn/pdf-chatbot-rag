@@ -1,16 +1,18 @@
-import requests
+import subprocess
 
-MODEL_NAME = "deepseek-r1:1.5b"
-OLLAMA_URL = "http://localhost:11434/api/generate"
-
+MODEL_NAME = "qwen2.5:3b"
 
 def ask_llm(context, question):
+    """
+    Calls Ollama directly via CLI for maximum stability on Windows
+    """
+
     prompt = f"""
-You are a PDF Analysis Assistant.
+You are a PDF Analysis expert.
 
 Rules:
 - Answer ONLY from the given context.
-- If not answerable, reply exactly: the question is irrelavant
+- If the answer is not present, reply exactly: the question is irrelavant
 - No reasoning, no explanations, no markdown.
 
 Context:
@@ -22,42 +24,26 @@ Question:
 Answer:
 """.strip()
 
-    payload = {
-        "model": MODEL_NAME,
-        "prompt": prompt,
-        "stream": False,   # IMPORTANT: force single response
-        "options": {
-            "temperature": 0.1,
-            "num_predict": 256,
-            "num_ctx": 4096
-        }
-    }
-
     try:
-        response = requests.post(
-            OLLAMA_URL,
-            json=payload,
+        process = subprocess.run(
+            ["ollama", "run", MODEL_NAME],
+            input=prompt,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="ignore",
             timeout=180
         )
-        response.raise_for_status()
 
-        # 🔑 Ollama may return NDJSON → handle safely
-        raw_text = response.text.strip()
+        output = process.stdout.strip()
 
-        final_answer = ""
-        for line in raw_text.splitlines():
-            try:
-                chunk = requests.utils.json.loads(line)
-                final_answer += chunk.get("response", "")
-            except Exception:
-                pass
-
-        final_answer = final_answer.strip()
-
-        if not final_answer:
+        if not output:
             return "the question is irrelavant"
 
-        return final_answer
+        return output
+
+    except subprocess.TimeoutExpired:
+        return "LLM timeout error"
 
     except Exception as e:
         return f"LLM error: {str(e)}"

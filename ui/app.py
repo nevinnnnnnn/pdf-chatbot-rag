@@ -51,10 +51,12 @@ if st.session_state.dark_mode:
 with st.sidebar:
     st.header("Controls")
 
-    #Dark mode toggle
-    st.session_state.dark_mode = st.toggle("Dark Mode", value=st.session_state.dark_mode)
+    # Dark mode toggle
+    st.session_state.dark_mode = st.toggle(
+        "Dark Mode", value=st.session_state.dark_mode
+    )
 
-    #Clear chat
+    # Clear chat
     if st.button("🧹 Clear Chat"):
         st.session_state.messages = []
 
@@ -103,12 +105,15 @@ for msg in st.session_state.messages:
                 for src in msg["sources"]:
                     st.write(f"Page {src['page']} (distance: {src['distance']})")
 
+        if msg["role"] == "assistant" and msg.get("confidence") is not None:
+            st.caption(f"Confidence: {msg['confidence']}")
+
 # ---------------- Chat Input ----------------
 if st.session_state.pdf_indexed:
     user_input = st.chat_input("Ask a question about the PDF...")
 
     if user_input:
-        # User message
+        # Save user message
         st.session_state.messages.append({
             "role": "user",
             "content": user_input
@@ -117,21 +122,33 @@ if st.session_state.pdf_indexed:
         with st.chat_message("user"):
             st.markdown(user_input)
 
-        # Assistant response with typing effect
+        # Assistant response
         with st.chat_message("assistant"):
             placeholder = st.empty()
 
             with st.spinner("Thinking..."):
-                response = answer_question(user_input)
+                try:
+                    response = answer_question(user_input)
+                except Exception as e:
+                    response = {
+                        "answer": "Something went wrong while processing your question.",
+                        "sources": [],
+                        "confidence": 0.0
+                    }
 
-            answer = response["answer"]
+            answer = response.get("answer", "No response generated.")
             sources = response.get("sources", [])
+            confidence = response.get("confidence", None)
 
+            # Typing animation
             typed_text = ""
             for word in answer.split():
                 typed_text += word + " "
                 placeholder.markdown(typed_text)
                 time.sleep(0.03)
+
+            if confidence is not None:
+                st.caption(f"Confidence: {confidence}")
 
             if sources:
                 with st.expander("Sources"):
@@ -142,7 +159,8 @@ if st.session_state.pdf_indexed:
         st.session_state.messages.append({
             "role": "assistant",
             "content": answer,
-            "sources": sources
+            "sources": sources,
+            "confidence": confidence
         })
 
 else:
