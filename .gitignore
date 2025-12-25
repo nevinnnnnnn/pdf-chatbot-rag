@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+data/uploads/
+data/vectorstore/
+data/analytics/
+*.faiss
+*.pkl
+analytics_logs.json
+.env
