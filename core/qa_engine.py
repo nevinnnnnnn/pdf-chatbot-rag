@@ -3,13 +3,13 @@ from core.llm import ask_llm_stream
 from core.analytics_logger import log_interaction
 from core.entity_extractor import extract_entities
 
-DISTANCE_THRESHOLD = 3.0  # relaxed for resumes & structured docs
+DISTANCE_THRESHOLD = 3.5  # relaxed for resumes & structured docs
 
 
 def answer_question(question, top_k=3):
     if not question or not question.strip():
         return {
-            "answer": "Please ask a valid question.",
+            "answer": "Please ask a question in context to the pdf.",
             "sources": [],
             "confidence": 0.0
         }

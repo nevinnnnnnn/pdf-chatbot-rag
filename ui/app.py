@@ -54,21 +54,17 @@ with st.sidebar:
         "Dark Mode", value=st.session_state.dark_mode
     )
 
-    if st.button("🧹 Clear Chat"):
+    if st.button("Clear Chat"):
         st.session_state.messages = []
 
     st.divider()
     st.header("Upload PDF")
 
-    uploaded_file = st.file_uploader(
-        "Upload a PDF",
-        type=["pdf"]
-    )
+    uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 
     if uploaded_file:
         pdf_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
 
-        # 🔁 Re-index if new PDF
         if st.session_state.pdf_path != pdf_path:
             with open(pdf_path, "wb") as f:
                 f.write(uploaded_file.getbuffer())
@@ -111,26 +107,29 @@ if st.session_state.pdf_indexed:
     user_input = st.chat_input("Ask a question about the PDF...")
 
     if user_input:
+        #Render USER immediately
+        with st.chat_message("user"):
+            st.markdown(user_input)
+
         st.session_state.messages.append({
             "role": "user",
             "content": user_input
         })
 
+        #Render ASSISTANT once
         with st.chat_message("assistant"):
             placeholder = st.empty()
 
             response = answer_question(user_input)
-
             answer = response["answer"]
             sources = response.get("sources", [])
             confidence = response.get("confidence", None)
 
-            # ✨ Typing effect
             typed = ""
             for char in answer:
                 typed += char
                 placeholder.markdown(typed)
-                time.sleep(0.01)
+                time.sleep(0.008)
 
             if confidence is not None:
                 st.caption(f"Confidence: {confidence}")
@@ -140,6 +139,7 @@ if st.session_state.pdf_indexed:
                     for src in sources:
                         st.write(f"Page {src['page']} (distance: {src['distance']})")
 
+        #Store assistant AFTER rendering
         st.session_state.messages.append({
             "role": "assistant",
             "content": answer,
