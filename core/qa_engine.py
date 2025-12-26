@@ -3,29 +3,34 @@ from core.llm import ask_llm_stream
 from core.analytics_logger import log_interaction
 from core.entity_extractor import extract_entities
 
-DISTANCE_THRESHOLD = 3.5  # relaxed for resumes & structured docs
+DISTANCE_THRESHOLD = 3.5
 
 
-def answer_question(question, top_k=3):
+def answer_question(question, vector_store_path, top_k=3):
     if not question or not question.strip():
         return {
-            "answer": "Please ask a question in context to the pdf.",
+            "answer": "Please ask a question in context to the PDF.",
             "sources": [],
             "confidence": 0.0
         }
 
     # ---------------- Load Vector Store ----------------
     try:
-        index, metadata = load_vector_store()
+        index, metadata = load_vector_store(vector_store_path)
     except Exception:
         return {
-            "answer": "No document knowledge is available yet.",
+            "answer": "No document is indexed for this chat yet.",
             "sources": [],
             "confidence": 0.0
         }
 
     # ---------------- Similarity Search ----------------
-    results = similarity_search(question, index, metadata, top_k=top_k)
+    results = similarity_search(
+        query=question,
+        index=index,
+        metadata=metadata,
+        top_k=top_k
+    )
 
     if not results:
         return {
@@ -47,34 +52,29 @@ def answer_question(question, top_k=3):
         })
         distances.append(r["distance"])
 
-    # ---------------- Structured Entity Extraction ----------------
+    # ---------------- Entity Extraction ----------------
     entities = extract_entities(context)
     q = question.lower()
 
-    # -------- Entity-based Direct Answers (High Confidence) --------
+    # -------- Direct Entity Answers --------
     if "email" in q and entities.get("emails"):
         answer = ", ".join(entities["emails"])
-        log_interaction(question, answer, [], 1.0)
         return {"answer": answer, "sources": [], "confidence": 1.0}
 
     if any(k in q for k in ["phone", "contact", "mobile"]) and entities.get("phones"):
         answer = ", ".join(entities["phones"])
-        log_interaction(question, answer, [], 1.0)
         return {"answer": answer, "sources": [], "confidence": 1.0}
 
     if any(k in q for k in ["website", "url", "link"]) and entities.get("urls"):
         answer = ", ".join(entities["urls"])
-        log_interaction(question, answer, [], 1.0)
         return {"answer": answer, "sources": [], "confidence": 1.0}
 
-    if any(k in q for k in ["date", "dob", "issued", "invoice date"]) and entities.get("dates"):
+    if any(k in q for k in ["date", "dob", "issued"]) and entities.get("dates"):
         answer = ", ".join(entities["dates"])
-        log_interaction(question, answer, [], 1.0)
         return {"answer": answer, "sources": [], "confidence": 1.0}
 
-    if any(k in q for k in ["amount", "salary", "price", "cost", "total"]) and entities.get("amounts"):
+    if any(k in q for k in ["amount", "salary", "price", "total"]) and entities.get("amounts"):
         answer = ", ".join(entities["amounts"])
-        log_interaction(question, answer, [], 1.0)
         return {"answer": answer, "sources": [], "confidence": 1.0}
 
     # ---------------- Relevance Check ----------------
@@ -85,26 +85,16 @@ def answer_question(question, top_k=3):
             "confidence": 0.0
         }
 
-    # ---------------- Ask LLM (RAG) ----------------
+    # ---------------- Ask LLM ----------------
     answer_chunks = []
     for token in ask_llm_stream(context, question):
         answer_chunks.append(token)
 
-    answer = " ".join(answer_chunks).strip()
+    answer = " ".join(answer_chunks).strip() or "the question is irrelavant"
 
-    if not answer:
-        answer = "the question is irrelavant"
-
-    # ---------------- Confidence Score ----------------
     confidence = round(1 / (1 + sum(distances) / len(distances)), 3)
 
-    # ---------------- Analytics ----------------
-    log_interaction(
-        question=question,
-        answer=answer,
-        sources=sources,
-        confidence=confidence
-    )
+    log_interaction(question, answer, sources, confidence)
 
     return {
         "answer": answer,
