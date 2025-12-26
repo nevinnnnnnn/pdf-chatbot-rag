@@ -13,6 +13,8 @@ def process_pdf(pdf_path):
 
     for page_number, page in enumerate(reader.pages, start=1):
         text = page.extract_text()
+        if text:
+            text = text.encode("utf-8", "ignore").decode("utf-8")
         if not text:
             continue
 

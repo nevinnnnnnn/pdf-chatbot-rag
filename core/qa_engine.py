@@ -1,13 +1,12 @@
 from core.embeddings import load_vector_store, similarity_search
 from core.llm import ask_llm_stream
 from core.analytics_logger import log_interaction
+from core.entity_extractor import extract_entities
+
+DISTANCE_THRESHOLD = 3.0  # relaxed for resumes & structured docs
 
 
-def answer_question(question, top_k=2):
-    """
-    Answers a question using FAISS retrieval + LLM
-    """
-
+def answer_question(question, top_k=3):
     if not question or not question.strip():
         return {
             "answer": "Please ask a valid question.",
@@ -15,68 +14,100 @@ def answer_question(question, top_k=2):
             "confidence": 0.0
         }
 
-    # Load vector store
+    # ---------------- Load Vector Store ----------------
     try:
         index, metadata = load_vector_store()
-    except Exception as e:
+    except Exception:
         return {
             "answer": "No document knowledge is available yet.",
             "sources": [],
             "confidence": 0.0
         }
 
-    # Retrieve relevant chunks
+    # ---------------- Similarity Search ----------------
     results = similarity_search(question, index, metadata, top_k=top_k)
 
     if not results:
         return {
-            "answer": "The question is irrelevant or not covered in the document.",
+            "answer": "the question is irrelavant",
             "sources": [],
             "confidence": 0.0
         }
 
-    # Build context
+    # ---------------- Build Context ----------------
     context = ""
-    sources_dict = {}
+    sources = []
     distances = []
 
     for r in results:
         context += f"[Page {r['page']}]\n{r['text']}\n\n"
+        sources.append({
+            "page": r["page"],
+            "distance": round(r["distance"], 4)
+        })
+        distances.append(r["distance"])
 
-        dist = float(r.get("distance", 1.0))
-        page = r.get("page", "N/A")
+    # ---------------- Structured Entity Extraction ----------------
+    entities = extract_entities(context)
+    q = question.lower()
 
-        distances.append(dist)
+    # -------- Entity-based Direct Answers (High Confidence) --------
+    if "email" in q and entities.get("emails"):
+        answer = ", ".join(entities["emails"])
+        log_interaction(question, answer, [], 1.0)
+        return {"answer": answer, "sources": [], "confidence": 1.0}
 
-        rounded_dist = round(dist, 4)
-        if page not in sources_dict or rounded_dist < sources_dict[page]:
-            sources_dict[page] = rounded_dist
+    if any(k in q for k in ["phone", "contact", "mobile"]) and entities.get("phones"):
+        answer = ", ".join(entities["phones"])
+        log_interaction(question, answer, [], 1.0)
+        return {"answer": answer, "sources": [], "confidence": 1.0}
 
-    sources = [
-        {"page": page, "distance": distance}
-        for page, distance in sources_dict.items()
-    ]
+    if any(k in q for k in ["website", "url", "link"]) and entities.get("urls"):
+        answer = ", ".join(entities["urls"])
+        log_interaction(question, answer, [], 1.0)
+        return {"answer": answer, "sources": [], "confidence": 1.0}
 
-    # Ask LLM safely
-    try:
-        answer_stream = ask_llm_stream(context, question)
-        if not answer or not answer.strip():
-            answer = "The question is irrelevant."
-    except Exception as e:
-        answer = "The question is irrelevant."
+    if any(k in q for k in ["date", "dob", "issued", "invoice date"]) and entities.get("dates"):
+        answer = ", ".join(entities["dates"])
+        log_interaction(question, answer, [], 1.0)
+        return {"answer": answer, "sources": [], "confidence": 1.0}
 
-    # Confidence score
-    confidence = round(1 / (1 + sum(distances) / len(distances)), 4)
+    if any(k in q for k in ["amount", "salary", "price", "cost", "total"]) and entities.get("amounts"):
+        answer = ", ".join(entities["amounts"])
+        log_interaction(question, answer, [], 1.0)
+        return {"answer": answer, "sources": [], "confidence": 1.0}
 
-    # Log interaction
+    # ---------------- Relevance Check ----------------
+    if min(distances) > DISTANCE_THRESHOLD:
+        return {
+            "answer": "the question is irrelavant",
+            "sources": [],
+            "confidence": 0.0
+        }
+
+    # ---------------- Ask LLM (RAG) ----------------
+    answer_chunks = []
+    for token in ask_llm_stream(context, question):
+        answer_chunks.append(token)
+
+    answer = " ".join(answer_chunks).strip()
+
+    if not answer:
+        answer = "the question is irrelavant"
+
+    # ---------------- Confidence Score ----------------
+    confidence = round(1 / (1 + sum(distances) / len(distances)), 3)
+
+    # ---------------- Analytics ----------------
     log_interaction(
         question=question,
         answer=answer,
-        confidence=confidence,
-        sources=sources
+        sources=sources,
+        confidence=confidence
     )
 
     return {
-        "answer_stream": answer_stream,
-        "sources": sources
+        "answer": answer,
+        "sources": sources,
+        "confidence": confidence
     }

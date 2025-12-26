@@ -1,6 +1,7 @@
 import sys
 import os
 import base64
+import time
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -21,26 +22,25 @@ st.set_page_config(
 )
 
 st.title("PDF Chatbot")
-st.caption("Please don't ask irrelevant questions or the name of the 6th prime minister of India")
+st.caption("Ask questions strictly related to the uploaded PDF.")
 
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # ---------------- Session State ----------------
-if "pdf_indexed" not in st.session_state:
-    st.session_state.pdf_indexed = False
+st.session_state.setdefault("pdf_indexed", False)
+st.session_state.setdefault("messages", [])
+st.session_state.setdefault("dark_mode", False)
+st.session_state.setdefault("pdf_path", None)
 
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-
-if "dark_mode" not in st.session_state:
-    st.session_state.dark_mode = False
-
-# ---------------- Dark Mode CSS ----------------
+# ---------------- Dark Mode ----------------
 if st.session_state.dark_mode:
     st.markdown(
         """
         <style>
-        body { background-color: #0f172a; color: white; }
+        .stApp {
+            background-color: #0f172a;
+            color: white;
+        }
         </style>
         """,
         unsafe_allow_html=True
@@ -62,29 +62,30 @@ with st.sidebar:
 
     uploaded_file = st.file_uploader(
         "Upload a PDF",
-        type=["pdf"],
-        help="Upload once, then start chatting"
+        type=["pdf"]
     )
 
-    if uploaded_file and not st.session_state.pdf_indexed:
+    if uploaded_file:
         pdf_path = os.path.join(UPLOAD_DIR, uploaded_file.name)
 
-        with open(pdf_path, "wb") as f:
-            f.write(uploaded_file.getbuffer())
+        # 🔁 Re-index if new PDF
+        if st.session_state.pdf_path != pdf_path:
+            with open(pdf_path, "wb") as f:
+                f.write(uploaded_file.getbuffer())
 
-        with st.spinner("Processing and indexing PDF..."):
-            documents = process_pdf(pdf_path)
-            create_vector_store(documents)
+            with st.spinner("Processing and indexing PDF..."):
+                documents = process_pdf(pdf_path)
+                create_vector_store(documents)
 
-        st.session_state.pdf_indexed = True
-        st.session_state.pdf_path = pdf_path
-        st.success("PDF indexed successfully!")
+            st.session_state.pdf_indexed = True
+            st.session_state.pdf_path = pdf_path
+            st.session_state.messages = []
+
+            st.success("PDF indexed successfully!")
 
     if st.session_state.pdf_indexed:
-        st.success("PDF ready for chat")
-
         with open(st.session_state.pdf_path, "rb") as f:
-            pdf_base64 = base64.b64encode(f.read()).decode("utf-8")
+            pdf_base64 = base64.b64encode(f.read()).decode()
 
         components.iframe(
             src=f"data:application/pdf;base64,{pdf_base64}",
@@ -96,13 +97,14 @@ for msg in st.session_state.messages:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-        if msg["role"] == "assistant" and msg.get("sources"):
-            with st.expander("Sources"):
-                for src in msg["sources"]:
-                    st.write(f"Page {src['page']} (distance: {src['distance']})")
+        if msg["role"] == "assistant":
+            if msg.get("confidence") is not None:
+                st.caption(f"Confidence: {msg['confidence']}")
 
-        if msg["role"] == "assistant" and msg.get("confidence") is not None:
-            st.caption(f"Confidence: {msg['confidence']}")
+            if msg.get("sources"):
+                with st.expander("Sources"):
+                    for src in msg["sources"]:
+                        st.write(f"Page {src['page']} (distance: {src['distance']})")
 
 # ---------------- Chat Input ----------------
 if st.session_state.pdf_indexed:
@@ -114,29 +116,21 @@ if st.session_state.pdf_indexed:
             "content": user_input
         })
 
-        with st.chat_message("user"):
-            st.markdown(user_input)
-
         with st.chat_message("assistant"):
             placeholder = st.empty()
-            full_answer = ""
 
-            try:
-                response = answer_question(user_input)
-                answer_stream = response["answer_stream"]
-                sources = response.get("sources", [])
-                confidence = response.get("confidence", None)
+            response = answer_question(user_input)
 
-                # 🔥 REAL TOKEN STREAMING
-                for token in answer_stream:
-                    full_answer += token
-                    placeholder.markdown(full_answer)
+            answer = response["answer"]
+            sources = response.get("sources", [])
+            confidence = response.get("confidence", None)
 
-            except Exception as e:
-                full_answer = "Something went wrong while processing your question."
-                placeholder.markdown(full_answer)
-                sources = []
-                confidence = 0.0
+            # ✨ Typing effect
+            typed = ""
+            for char in answer:
+                typed += char
+                placeholder.markdown(typed)
+                time.sleep(0.01)
 
             if confidence is not None:
                 st.caption(f"Confidence: {confidence}")
@@ -148,10 +142,9 @@ if st.session_state.pdf_indexed:
 
         st.session_state.messages.append({
             "role": "assistant",
-            "content": full_answer,
+            "content": answer,
             "sources": sources,
             "confidence": confidence
         })
-
 else:
     st.info("Upload a PDF from the sidebar to start chatting.")
