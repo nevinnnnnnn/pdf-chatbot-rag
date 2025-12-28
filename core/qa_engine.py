@@ -7,6 +7,7 @@ DISTANCE_THRESHOLD = 3.5
 
 
 def answer_question(question, vector_store_path, top_k=3):
+    # ---------------- Input Validation ----------------
     if not question or not question.strip():
         return {
             "answer": "Please ask a question in context to the PDF.",
@@ -40,42 +41,61 @@ def answer_question(question, vector_store_path, top_k=3):
         }
 
     # ---------------- Build Context ----------------
-    context = ""
+    context_chunks = []
     sources = []
     distances = []
 
     for r in results:
-        context += f"[Page {r['page']}]\n{r['text']}\n\n"
+        context_chunks.append(
+            f"[Page {r['page']}]\n{r['text']}"
+        )
         sources.append({
             "page": r["page"],
             "distance": round(r["distance"], 4)
         })
         distances.append(r["distance"])
 
+    context = "\n\n".join(context_chunks)
+
     # ---------------- Entity Extraction ----------------
     entities = extract_entities(context)
     q = question.lower()
 
-    # -------- Direct Entity Answers --------
+    # -------- Direct Entity Answers (Fast Path) --------
     if "email" in q and entities.get("emails"):
-        answer = ", ".join(entities["emails"])
-        return {"answer": answer, "sources": [], "confidence": 1.0}
+        return {
+            "answer": ", ".join(entities["emails"]),
+            "sources": [],
+            "confidence": 1.0
+        }
 
     if any(k in q for k in ["phone", "contact", "mobile"]) and entities.get("phones"):
-        answer = ", ".join(entities["phones"])
-        return {"answer": answer, "sources": [], "confidence": 1.0}
+        return {
+            "answer": ", ".join(entities["phones"]),
+            "sources": [],
+            "confidence": 1.0
+        }
 
     if any(k in q for k in ["website", "url", "link"]) and entities.get("urls"):
-        answer = ", ".join(entities["urls"])
-        return {"answer": answer, "sources": [], "confidence": 1.0}
+        return {
+            "answer": ", ".join(entities["urls"]),
+            "sources": [],
+            "confidence": 1.0
+        }
 
     if any(k in q for k in ["date", "dob", "issued"]) and entities.get("dates"):
-        answer = ", ".join(entities["dates"])
-        return {"answer": answer, "sources": [], "confidence": 1.0}
+        return {
+            "answer": ", ".join(entities["dates"]),
+            "sources": [],
+            "confidence": 1.0
+        }
 
     if any(k in q for k in ["amount", "salary", "price", "total"]) and entities.get("amounts"):
-        answer = ", ".join(entities["amounts"])
-        return {"answer": answer, "sources": [], "confidence": 1.0}
+        return {
+            "answer": ", ".join(entities["amounts"]),
+            "sources": [],
+            "confidence": 1.0
+        }
 
     # ---------------- Relevance Check ----------------
     if min(distances) > DISTANCE_THRESHOLD:
@@ -85,16 +105,29 @@ def answer_question(question, vector_store_path, top_k=3):
             "confidence": 0.0
         }
 
-    # ---------------- Ask LLM ----------------
-    answer_chunks = []
+    # ---------------- Ask Hugging Face LLM (Streaming) ----------------
+    answer_tokens = []
     for token in ask_llm_stream(context, question):
-        answer_chunks.append(token)
+        answer_tokens.append(token)
 
-    answer = " ".join(answer_chunks).strip() or "the question is irrelavant"
+    answer = " ".join(answer_tokens).strip()
 
-    confidence = round(1 / (1 + sum(distances) / len(distances)), 3)
+    if not answer:
+        answer = "the question is irrelavant"
 
-    log_interaction(question, answer, sources, confidence)
+    # ---------------- Confidence ----------------
+    confidence = round(
+        1 / (1 + sum(distances) / len(distances)),
+        3
+    )
+
+    # ---------------- Logging ----------------
+    log_interaction(
+        question=question,
+        answer=answer,
+        sources=sources,
+        confidence=confidence
+    )
 
     return {
         "answer": answer,
