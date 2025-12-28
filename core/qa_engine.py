@@ -3,14 +3,12 @@ from core.llm import ask_llm_stream
 from core.analytics_logger import log_interaction
 from core.entity_extractor import extract_entities
 
-DISTANCE_THRESHOLD = 3.5
-
 
 def answer_question(question, vector_store_path, top_k=3):
     # ---------------- Input Validation ----------------
     if not question or not question.strip():
         return {
-            "answer": "Please ask a question in context to the PDF.",
+            "answer": "Please ask a question related to the document.",
             "sources": [],
             "confidence": 0.0
         }
@@ -57,55 +55,46 @@ def answer_question(question, vector_store_path, top_k=3):
 
     context = "\n\n".join(context_chunks)
 
-    # ---------------- Entity Extraction ----------------
+    # ---------------- Entity Extraction (Fast Path) ----------------
     entities = extract_entities(context)
     q = question.lower()
 
-    # -------- Direct Entity Answers (Fast Path) --------
     if "email" in q and entities.get("emails"):
         return {
             "answer": ", ".join(entities["emails"]),
-            "sources": [],
+            "sources": sources,
             "confidence": 1.0
         }
 
     if any(k in q for k in ["phone", "contact", "mobile"]) and entities.get("phones"):
         return {
             "answer": ", ".join(entities["phones"]),
-            "sources": [],
+            "sources": sources,
             "confidence": 1.0
         }
 
     if any(k in q for k in ["website", "url", "link"]) and entities.get("urls"):
         return {
             "answer": ", ".join(entities["urls"]),
-            "sources": [],
+            "sources": sources,
             "confidence": 1.0
         }
 
     if any(k in q for k in ["date", "dob", "issued"]) and entities.get("dates"):
         return {
             "answer": ", ".join(entities["dates"]),
-            "sources": [],
+            "sources": sources,
             "confidence": 1.0
         }
 
     if any(k in q for k in ["amount", "salary", "price", "total"]) and entities.get("amounts"):
         return {
             "answer": ", ".join(entities["amounts"]),
-            "sources": [],
+            "sources": sources,
             "confidence": 1.0
         }
 
-    # ---------------- Relevance Check ----------------
-    if min(distances) > DISTANCE_THRESHOLD:
-        return {
-            "answer": "the question is irrelavant",
-            "sources": [],
-            "confidence": 0.0
-        }
-
-    # ---------------- Ask Hugging Face LLM (Streaming) ----------------
+    # ---------------- Ask LLM (LET IT DECIDE) ----------------
     answer_tokens = []
     for token in ask_llm_stream(context, question):
         answer_tokens.append(token)
@@ -115,7 +104,7 @@ def answer_question(question, vector_store_path, top_k=3):
     if not answer:
         answer = "the question is irrelavant"
 
-    # ---------------- Confidence ----------------
+    # ---------------- Confidence (Soft, Not Binary) ----------------
     confidence = round(
         1 / (1 + sum(distances) / len(distances)),
         3
