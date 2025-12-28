@@ -33,7 +33,7 @@ class HFInferenceLLM:
             return str(first)
         return ""
 
-llm = HFInferenceLLM("mistralai/Mistral-7B-Instruct-v0.2", st.secrets["HF_TOKEN"], temperature=0.2, max_new_tokens=512)
+llm = HFInferenceLLM("Mistral-7B-Instruct", st.secrets["HF_TOKEN"], temperature=0.2, max_new_tokens=512)
 # ---------------- Streaming Wrapper ----------------
 def ask_llm_stream(context, question):
     prompt = f"""
