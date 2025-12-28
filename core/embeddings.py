@@ -1,26 +1,72 @@
 import os
 import pickle
+from typing import List, Dict, Tuple
+
 import faiss
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
-embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+# -----------------------------
+# Model Initialization
+# -----------------------------
+EMBEDDING_MODEL_NAME = "all-MiniLM-L6-v2"
+
+try:
+    embedding_model = SentenceTransformer(EMBEDDING_MODEL_NAME)
+except Exception as e:
+    raise RuntimeError(f"Failed to load embedding model: {e}")
 
 
-def create_vector_store(documents, save_path="data/vectorstore"):
+# -----------------------------
+# Vector Store Creation
+# -----------------------------
+def create_vector_store(
+    documents: List[Dict],
+    save_path: str = "data/vectorstore"
+) -> Tuple[faiss.Index, List[Dict]]:
+    """
+    Creates a FAISS vector store from documents and saves it to disk.
+
+    documents: List of dicts with keys -> 'text', 'page'
+    save_path: Directory to save FAISS index and metadata
+    """
+
     if not documents:
-        raise ValueError("No documents to index")
+        raise ValueError("No documents provided for vector store creation.")
+
+    # Validate input structure
+    for doc in documents:
+        if "text" not in doc or "page" not in doc:
+            raise KeyError("Each document must contain 'text' and 'page' keys.")
 
     texts = [doc["text"] for doc in documents]
-    metadata = [{"page": doc["page"], "text": doc["text"]} for doc in documents]
+    metadata = [
+        {
+            "page": doc["page"],
+            "text": doc["text"]
+        }
+        for doc in documents
+    ]
 
-    embeddings = embedding_model.encode(texts, show_progress_bar=True)
-    embeddings = np.array(embeddings).astype("float32")
+    # Generate embeddings
+    embeddings = embedding_model.encode(
+        texts,
+        convert_to_numpy=True,
+        show_progress_bar=True,
+        normalize_embeddings=False
+    ).astype("float32")
+
+    if embeddings.ndim != 2:
+        raise ValueError("Embedding generation failed. Invalid embedding shape.")
 
     dimension = embeddings.shape[1]
+
+    # Create FAISS index
     index = faiss.IndexFlatL2(dimension)
     index.add(embeddings)
 
+    # Persist to disk
     os.makedirs(save_path, exist_ok=True)
     faiss.write_index(index, os.path.join(save_path, "index.faiss"))
 
@@ -30,25 +76,67 @@ def create_vector_store(documents, save_path="data/vectorstore"):
     return index, metadata
 
 
-def load_vector_store(load_path="data/vectorstore"):
-    index = faiss.read_index(os.path.join(load_path, "index.faiss"))
+# -----------------------------
+# Load Vector Store
+# -----------------------------
+def load_vector_store(
+    load_path: str = "data/vectorstore"
+) -> Tuple[faiss.Index, List[Dict]]:
+    """
+    Loads FAISS index and metadata from disk.
+    """
 
-    with open(os.path.join(load_path, "metadata.pkl"), "rb") as f:
+    index_path = os.path.join(load_path, "index.faiss")
+    metadata_path = os.path.join(load_path, "metadata.pkl")
+
+    if not os.path.exists(index_path) or not os.path.exists(metadata_path):
+        raise FileNotFoundError(
+            "Vector store not found. Please create embeddings first."
+        )
+
+    index = faiss.read_index(index_path)
+
+    with open(metadata_path, "rb") as f:
         metadata = pickle.load(f)
 
     return index, metadata
 
 
-def similarity_search(query, index, metadata, top_k=3):
-    query_embedding = embedding_model.encode([query]).astype("float32")
+# -----------------------------
+# Similarity Search
+# -----------------------------
+def similarity_search(
+    query: str,
+    index: faiss.Index,
+    metadata: List[Dict],
+    top_k: int = 3
+) -> List[Dict]:
+    """
+    Performs similarity search on the FAISS index.
+    """
+
+    if not query or not isinstance(query, str):
+        raise ValueError("Query must be a non-empty string.")
+
+    if index.ntotal == 0:
+        return []
+
+    query_embedding = embedding_model.encode(
+        [query],
+        convert_to_numpy=True
+    ).astype("float32")
+
     distances, indices = index.search(query_embedding, top_k)
 
     results = []
     for idx, dist in zip(indices[0], distances[0]):
+        if idx == -1:
+            continue
+
         results.append({
-            "page": metadata[idx]["page"],
+            "page": metadata[idx].get("page"),
             "distance": float(dist),
-            "text": metadata[idx]["text"]
+            "text": metadata[idx].get("text")
         })
 
     return results

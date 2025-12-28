@@ -1,48 +1,91 @@
-import streamlit as st
-from langchain_huggingface import HuggingFaceEndpoint
-from huggingface_hub import InferenceApi
+import os
+from typing import Generator
 
-# ---------------- LLM ----------------
-llm = HuggingFaceEndpoint(
+from huggingface_hub import InferenceClient
+
+
+# -------------------------------------------------
+# LLM Wrapper (Hugging Face Inference API)
+# -------------------------------------------------
+
+class HFInferenceLLM:
+    def __init__(
+        self,
+        repo_id: str,
+        token: str,
+        temperature: float = 0.2,
+        max_new_tokens: int = 512,
+    ):
+        if not token:
+            raise ValueError("HuggingFace token is missing.")
+
+        self.repo_id = repo_id
+        self.temperature = temperature
+        self.max_new_tokens = max_new_tokens
+
+        self.client = InferenceClient(
+            model=repo_id,
+            token=token
+        )
+
+    def invoke(self, prompt: str) -> str:
+        """
+        Sends a prompt to the HF inference endpoint.
+        """
+
+        try:
+            response = self.client.text_generation(
+                prompt=prompt,
+                max_new_tokens=self.max_new_tokens,
+                temperature=self.temperature,
+                do_sample=True,
+                return_full_text=False,
+            )
+        except Exception as e:
+            print(f"[LLM ERROR] {e}")
+            return ""
+
+        if not response:
+            return ""
+
+        return response.strip()
+
+
+# -------------------------------------------------
+# Initialize LLM (Environment-safe)
+# -------------------------------------------------
+
+HF_TOKEN = os.getenv("HF_TOKEN", "")
+
+llm = HFInferenceLLM(
     repo_id="mistralai/Mistral-7B-Instruct-v0.2",
-    huggingfacehub_api_token=st.secrets["HF_TOKEN"],
+    token=HF_TOKEN,
     temperature=0.2,
     max_new_tokens=512
 )
-class HFInferenceLLM:
-    def __init__(self, repo_id: str, token: str, temperature: float = 0.2, max_new_tokens: int = 512):
-        self.client = InferenceApi(repo_id=repo_id, token=token)
-        self.params = {"temperature": temperature, "max_new_tokens": max_new_tokens}
 
-    def invoke(self, prompt: str) -> str:
-        try:
-            result = self.client(inputs=prompt, parameters=self.params)
-        except Exception:
-            raise
 
-        if isinstance(result, str):
-            return result
-        if isinstance(result, dict):
-            if "generated_text" in result:
-                return result["generated_text"]
-            return str(result)
-        if isinstance(result, list) and result:
-            first = result[0]
-            if isinstance(first, dict) and "generated_text" in first:
-                return first["generated_text"]
-            return str(first)
-        return ""
+# -------------------------------------------------
+# Streaming Wrapper (UI-friendly)
+# -------------------------------------------------
 
-llm = HFInferenceLLM("Mistral-7B-Instruct", st.secrets["HF_TOKEN"], temperature=0.2, max_new_tokens=512)
-# ---------------- Streaming Wrapper ----------------
-def ask_llm_stream(context, question):
+def ask_llm_stream(context: str, question: str) -> Generator[str, None, None]:
+    """
+    Simulates token streaming for UI rendering.
+    """
+
+    MAX_CONTEXT_CHARS = 4000
+    context = context[:MAX_CONTEXT_CHARS]
+
     prompt = f"""
 You are a PDF analysis assistant.
 
 Rules:
-- Answer ONLY from the given context.
-- If not answerable, reply exactly: the question is irrelavant
-- No explanations, no markdown, no reasoning.
+- Answer ONLY using the provided context.
+- If the answer is not present, reply exactly:
+  "the question is irrelavant"
+- Do NOT explain your reasoning.
+- Do NOT use markdown.
 
 Context:
 {context}
@@ -53,16 +96,12 @@ Question:
 Answer:
 """.strip()
 
-    try:
-        response = llm.invoke(prompt)
-    except Exception:
+    response = llm.invoke(prompt)
+
+    if not response.strip():
         yield "the question is irrelavant"
         return
 
-    if not response or not response.strip():
-        yield "the question is irrelavant"
-        return
-
-    # Token-style streaming for UI typing effect
-    for token in response.split():
-        yield token
+    # Simulated streaming
+    for word in response.split():
+        yield word + " "

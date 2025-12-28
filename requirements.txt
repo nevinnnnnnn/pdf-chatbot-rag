@@ -6,4 +6,5 @@ faiss-cpu
 sentence-transformers
 pypdf
 huggingface_hub
-torch
+langchain-text-splitters
+numpy

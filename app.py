@@ -1,32 +1,35 @@
-import sys
 import os
+import sys
 import time
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 import streamlit as st
+
+# Ensure project root is accessible
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from core.pdf_processor import process_pdf
 from core.embeddings import create_vector_store
 from core.qa_engine import answer_question
 
+# ---------------- CONFIG ----------------
+
 UPLOAD_DIR = "data/uploads"
 VECTOR_DIR = "data/vectorstore"
 
-# ---------------- Page Config ----------------
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(VECTOR_DIR, exist_ok=True)
+
 st.set_page_config(
     page_title="PDF Chatbot",
     page_icon="📄",
     layout="centered"
 )
 
-st.title("PDF Chatbot")
-st.caption("Each chat has its own PDF & knowledge base.")
+st.title("📄 PDF Chatbot")
+st.caption("Each chat has its own PDF knowledge base.")
 
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-os.makedirs(VECTOR_DIR, exist_ok=True)
 
-# ---------------- Session State ----------------
+# ---------------- SESSION STATE INIT ----------------
+
 if "chats" not in st.session_state:
     st.session_state.chats = {"Chat 1": []}
 
@@ -41,11 +44,12 @@ if "chat_configs" not in st.session_state:
         }
     }
 
-# ---------------- Sidebar ----------------
+
+# ---------------- SIDEBAR ----------------
+
 with st.sidebar:
     st.header("💬 Chats")
 
-    # Create new chat
     if st.button("➕ New Chat"):
         chat_name = f"Chat {len(st.session_state.chats) + 1}"
         st.session_state.chats[chat_name] = []
@@ -55,7 +59,6 @@ with st.sidebar:
         }
         st.session_state.active_chat = chat_name
 
-    # Select chat
     st.session_state.active_chat = st.radio(
         "Select a chat",
         list(st.session_state.chats.keys()),
@@ -64,17 +67,16 @@ with st.sidebar:
         )
     )
 
-    # Clear current chat
     if st.button("🧹 Clear Current Chat"):
         st.session_state.chats[st.session_state.active_chat] = []
 
     st.divider()
-    st.header("Upload PDF (Current Chat Only)")
+    st.header("📄 Upload PDF")
 
     uploaded_file = st.file_uploader(
         "Upload a PDF for this chat",
         type=["pdf"],
-        key=st.session_state.active_chat
+        key=f"upload_{st.session_state.active_chat}"
     )
 
     if uploaded_file:
@@ -94,16 +96,17 @@ with st.sidebar:
             "indexed": True
         }
 
-        # Reset chat when new PDF uploaded
         st.session_state.chats[st.session_state.active_chat] = []
 
-        st.success("PDF indexed for this chat!")
+        st.success("PDF indexed successfully!")
 
-# ---------------- Active Chat ----------------
+
+# ---------------- CHAT VIEW ----------------
+
 active_chat = st.session_state.active_chat
 chat_config = st.session_state.chat_configs[active_chat]
 
-# Render chat history (ALWAYS from session_state)
+# Render chat history
 for msg in st.session_state.chats[active_chat]:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
@@ -115,26 +118,24 @@ for msg in st.session_state.chats[active_chat]:
             if msg.get("sources"):
                 with st.expander("Sources"):
                     for src in msg["sources"]:
-                        st.write(
-                            f"Page {src['page']} (distance: {src['distance']})"
-                        )
+                        st.write(f"Page {src['page']} (distance: {src['distance']})")
 
-# ---------------- Chat Input ----------------
+
+# ---------------- CHAT INPUT ----------------
+
 if chat_config["indexed"]:
     user_input = st.chat_input("Ask a question about this PDF...")
 
     if user_input:
-        # Store USER
+        # Store user message
         st.session_state.chats[active_chat].append({
             "role": "user",
             "content": user_input
         })
 
-        # Render USER immediately
         with st.chat_message("user"):
             st.markdown(user_input)
 
-        # Assistant response
         with st.chat_message("assistant"):
             placeholder = st.empty()
 
@@ -148,12 +149,12 @@ if chat_config["indexed"]:
 
             answer = response["answer"]
             sources = response.get("sources", [])
-            confidence = response.get("confidence", None)
+            confidence = response.get("confidence")
 
-            typed = ""
+            rendered = ""
             for char in answer:
-                typed += char
-                placeholder.markdown(typed)
+                rendered += char
+                placeholder.markdown(rendered)
                 time.sleep(0.008)
 
             if confidence is not None:
@@ -162,11 +163,8 @@ if chat_config["indexed"]:
             if sources:
                 with st.expander("Sources"):
                     for src in sources:
-                        st.write(
-                            f"Page {src['page']} (distance: {src['distance']})"
-                        )
+                        st.write(f"Page {src['page']} (distance: {src['distance']})")
 
-        # Store ASSISTANT
         st.session_state.chats[active_chat].append({
             "role": "assistant",
             "content": answer,
@@ -175,4 +173,4 @@ if chat_config["indexed"]:
         })
 
 else:
-    st.info("Upload a PDF for this chat to start chatting.")
+    st.info("Upload a PDF to start chatting.")

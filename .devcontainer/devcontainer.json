@@ -1,0 +1,37 @@
+{
+  "name": "PDF Chatbot Dev",
+
+  "image": "mcr.microsoft.com/devcontainers/python:3.11-bookworm",
+
+  "customizations": {
+    "codespaces": {
+      "openFiles": [
+        "README.md",
+        "ui/app.py"
+      ]
+    },
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
+    }
+  },
+
+  "postCreateCommand": "sudo apt-get update && if [ -f packages.txt ]; then sudo apt-get install -y $(cat packages.txt); fi && pip install -r requirements.txt",
+
+  "postStartCommand": "streamlit run ui/app.py --server.enableCORS false --server.enableXsrfProtection false",
+
+  "forwardPorts": [8501],
+
+  "portsAttributes": {
+    "8501": {
+      "label": "Streamlit App",
+      "onAutoForward": "openPreview"
+    }
+  },
+
+  "containerEnv": {
+    "PYTHONUNBUFFERED": "1"
+  }
+}
