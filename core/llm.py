@@ -1,9 +1,40 @@
-import subprocess
-import sys
+import streamlit as st
+from langchain_huggingface import HuggingFaceEndpoint
+from huggingface_hub import InferenceApi
 
-MODEL_NAME = "mistral:7b-instruct"
+# ---------------- LLM ----------------
+llm = HuggingFaceEndpoint(
+    repo_id="mistralai/Mistral-7B-Instruct-v0.2",
+    huggingfacehub_api_token=st.secrets["HF_TOKEN"],
+    temperature=0.2,
+    max_new_tokens=512
+)
+class HFInferenceLLM:
+    def __init__(self, repo_id: str, token: str, temperature: float = 0.2, max_new_tokens: int = 512):
+        self.client = InferenceApi(repo_id=repo_id, token=token)
+        self.params = {"temperature": temperature, "max_new_tokens": max_new_tokens}
 
+    def invoke(self, prompt: str) -> str:
+        try:
+            result = self.client(inputs=prompt, parameters=self.params)
+        except Exception:
+            raise
 
+        if isinstance(result, str):
+            return result
+        if isinstance(result, dict):
+            if "generated_text" in result:
+                return result["generated_text"]
+            return str(result)
+        if isinstance(result, list) and result:
+            first = result[0]
+            if isinstance(first, dict) and "generated_text" in first:
+                return first["generated_text"]
+            return str(first)
+        return ""
+
+llm = HFInferenceLLM("mistralai/Mistral-7B-Instruct-v0.2", st.secrets["HF_TOKEN"], temperature=0.2, max_new_tokens=512)
+# ---------------- Streaming Wrapper ----------------
 def ask_llm_stream(context, question):
     prompt = f"""
 You are a PDF analysis assistant.
@@ -22,26 +53,16 @@ Question:
 Answer:
 """.strip()
 
-    process = subprocess.Popen(
-        ["ollama", "run", MODEL_NAME],
-        stdin=subprocess.PIPE,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.DEVNULL,
-        text=True,
-        encoding="utf-8",
-        errors="ignore"     
-    )
-
     try:
-        process.stdin.write(prompt)
-        process.stdin.close()
+        response = llm.invoke(prompt)
     except Exception:
         yield "the question is irrelavant"
         return
 
-    for line in process.stdout:
-        if line.strip():
-            yield line.strip()
+    if not response or not response.strip():
+        yield "the question is irrelavant"
+        return
 
-    process.stdout.close()
-    process.wait()
+    # Token-style streaming for UI typing effect
+    for token in response.split():
+        yield token
