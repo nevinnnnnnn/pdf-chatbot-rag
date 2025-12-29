@@ -129,14 +129,26 @@ def similarity_search(
     distances, indices = index.search(query_embedding, top_k)
 
     results = []
+
+    def _distance_to_score(d: float) -> float:
+        try:
+            return float(1.0 / (1.0 + d))
+        except Exception:
+            return 0.0
+
     for idx, dist in zip(indices[0], distances[0]):
-        if idx == -1:
+        if idx < 0 or idx >= len(metadata):
             continue
 
+        score = _distance_to_score(float(dist))
         results.append({
             "page": metadata[idx].get("page"),
             "distance": float(dist),
+            "score": score,
             "text": metadata[idx].get("text")
         })
+
+    # Sort by score descending
+    results.sort(key=lambda x: x.get("score", 0.0), reverse=True)
 
     return results

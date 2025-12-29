@@ -61,3 +61,4 @@ def extract_entities(text: str) -> Dict[str, List[str]]:
         "dates": sorted(set(dates)),
         "amounts": sorted(set(amounts)),
     }
+

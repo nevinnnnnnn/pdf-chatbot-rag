@@ -48,6 +48,7 @@ def log_interaction(
                     data = []
         else:
             data = []
+            
 
         data.append(log_entry)
 
