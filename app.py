@@ -3,7 +3,7 @@ import time
 from typing import List, Dict, Any
 import streamlit as st
 
-# Custom imports - added type ignores for Pylance if these don't have stubs
+# Custom imports
 from core.pdf_processor import process_pdf # type: ignore
 from core.embeddings import create_vector_store # type: ignore
 from core.qa_engine import answer_question # type: ignore
@@ -19,7 +19,7 @@ os.makedirs(VECTOR_DIR, exist_ok=True)
 st.set_page_config(page_title="PDF Chatbot", page_icon="📄", layout="centered")
 st.title("📄 PDF Chatbot")
 
-# Initialize Session State with explicit types
+# 1. Initialize Session State
 if "chats" not in st.session_state:
     st.session_state["chats"] = {"Chat 1": []}
 if "active_chat" not in st.session_state:
@@ -27,7 +27,7 @@ if "active_chat" not in st.session_state:
 if "configs" not in st.session_state:
     st.session_state["configs"] = {"Chat 1": {"indexed": False}}
 
-# Sidebar
+# Sidebar Logic
 with st.sidebar:
     st.header("💬 Chats")
 
@@ -39,17 +39,17 @@ with st.sidebar:
         st.rerun()
 
     # Radio selection for active chat
+    chat_options = list(st.session_state.chats.keys())
     st.session_state.active_chat = st.radio(
         "Select Chat", 
-        options=list(st.session_state.chats.keys()),
-        index=list(st.session_state.chats.keys()).index(st.session_state.active_chat)
+        options=chat_options,
+        index=chat_options.index(st.session_state.active_chat)
     )
 
     st.divider()
     uploaded = st.file_uploader("Upload PDF", type=["pdf"])
 
     if uploaded:
-        # Solution for "replace" on None: cast to string explicitly
         safe_chat_id = str(st.session_state.active_chat).replace(" ", "_")
         pdf_path = os.path.join(UPLOAD_DIR, f"{safe_chat_id}.pdf")
         vector_path = os.path.join(VECTOR_DIR, safe_chat_id)
@@ -58,7 +58,6 @@ with st.sidebar:
             f.write(uploaded.getbuffer())
 
         with st.spinner("Indexing PDF..."):
-            # Added type hints to satisfy Pylance warnings
             docs: List[Any] = process_pdf(pdf_path)
             create_vector_store(docs, vector_path)
 
@@ -68,37 +67,40 @@ with st.sidebar:
 
 # Main Chat Area
 active_chat_name = str(st.session_state.active_chat)
-messages = st.session_state.chats.get(active_chat_name, [])
+# Reference the persistent list directly from session state
+history = st.session_state.chats[active_chat_name]
 config = st.session_state.configs.get(active_chat_name, {"indexed": False})
 
-# Display message history
-for msg in messages:
+# 2. Display message history FIRST (This keeps history visible while typing)
+for msg in history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# Interaction logic
+# 3. Interaction logic
 if config.get("indexed"):
     user_input = st.chat_input("Ask something about your PDF...")
 
     if user_input:
-        # Add user message to UI and State
+        # Display user message immediately
         with st.chat_message("user"):
             st.markdown(user_input)
-        messages.append({"role": "user", "content": user_input})
+        
+        # Save to session_state so it persists during the assistant's processing rerun
+        st.session_state.chats[active_chat_name].append({"role": "user", "content": user_input})
 
         # Generate Assistant Response
         with st.chat_message("assistant"):
             placeholder = st.empty()
             
-            # Fetch response
             safe_chat_id = active_chat_name.replace(" ", "_")
             result: Dict[str, Any] = answer_question(
                 user_input,
                 vector_store_path=os.path.join(VECTOR_DIR, safe_chat_id)
             )
 
-            # Streaming effect
             full_response = result.get("answer", "I couldn't find an answer.")
+            
+            # Streaming effect
             displayed_text = ""
             for word in full_response.split():
                 displayed_text += word + " "
@@ -106,12 +108,13 @@ if config.get("indexed"):
                 time.sleep(0.02)
             placeholder.markdown(full_response)
 
-        # Update State with assistant response
-        messages.append({
+        # 4. Save assistant response to session_state
+        st.session_state.chats[active_chat_name].append({
             "role": "assistant",
-            "content": full_response,
-            "sources": result.get("sources", []),
-            "confidence": result.get("confidence", 0)
+            "content": full_response
         })
+        
+        # Force rerun to clear the input box and lock in the history
+        st.rerun()
 else:
     st.info("Please upload and index a PDF in the sidebar to start chatting.")
