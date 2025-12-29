@@ -1,7 +1,6 @@
 import os
 import pickle
 import faiss
-import numpy as np
 from sentence_transformers import SentenceTransformer
 
 MODEL = "all-MiniLM-L6-v2"
@@ -30,16 +29,14 @@ def load_vector_store(path):
 
 
 def similarity_search(query, index, metadata, k=3):
-    q = model.encode([query], normalize_embeddings=True)
-    scores, indices = index.search(q, k)
+    query_emb = model.encode([query], normalize_embeddings=True)
+    scores, indices = index.search(query_emb, k)
 
     results = []
-    for i, score in zip(indices[0], scores[0]):
-        if i < 0:
-            continue
+    for idx, score in zip(indices[0], scores[0]):
         results.append({
-            "page": metadata[i]["page"],
-            "text": metadata[i]["text"],
+            "text": metadata[idx]["text"],
+            "page": metadata[idx]["page"],
             "score": float(score)
         })
 

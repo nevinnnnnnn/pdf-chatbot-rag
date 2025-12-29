@@ -1,15 +1,14 @@
-import os
-import re
 from pypdf import PdfReader
+import re
 
 
-def clean_text(text):
+def clean_text(text: str) -> str:
     text = text.replace("\x00", " ")
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
 
-def process_pdf(pdf_path, chunk_size=500, overlap=50):
+def process_pdf(pdf_path: str, chunk_size=500, overlap=50):
     reader = PdfReader(pdf_path)
     documents = []
 
