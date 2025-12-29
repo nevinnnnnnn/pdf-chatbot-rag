@@ -1,6 +1,6 @@
 streamlit
-pypdf
 sentence-transformers
 faiss-cpu
-huggingface-hub
+pypdf
 numpy
+requests

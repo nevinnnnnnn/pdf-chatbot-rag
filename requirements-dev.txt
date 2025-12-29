@@ -1,0 +1,5 @@
+# Type stubs for Pylance
+types-requests
+types-setuptools
+# Helper for static analysis
+mypy
