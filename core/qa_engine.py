@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from core.embeddings import load_vector_store, similarity_search
 from core.llm import ask_llm_stream
@@ -6,30 +6,38 @@ from core.analytics_logger import log_interaction
 from core.entity_extractor import extract_entities
 
 
-# -------------------------------------------------
+# ---------------------------------------
+# Types
+# ---------------------------------------
+
+Document = Dict[str, Any]
+Result = Dict[str, Any]
+
+
+# ---------------------------------------
 # Main QA Engine
-# -------------------------------------------------
+# ---------------------------------------
 
 def answer_question(
     question: str,
     vector_store_path: str,
+    chat_history: str = "",
     top_k: int = 3
-) -> Dict:
+) -> Dict[str, Any]:
     """
     Main RAG pipeline:
     - Load vector store
     - Retrieve relevant chunks
-    - Extract entities (fast path)
-    - Query LLM if needed
-    - Log interaction
+    - Extract entities
+    - Generate LLM response
     """
 
-    # ---------------- Input Validation ----------------
+    # ---------------- Validation ----------------
     if not question or not question.strip():
         return {
             "answer": "Please ask a question related to the document.",
             "sources": [],
-            "confidence": 0.0
+            "confidence": 0.0,
         }
 
     # ---------------- Load Vector Store ----------------
@@ -37,75 +45,64 @@ def answer_question(
         index, metadata = load_vector_store(vector_store_path)
     except Exception:
         return {
-            "answer": "No document is indexed for this chat yet.",
+            "answer": "No document has been indexed yet.",
             "sources": [],
-            "confidence": 0.0
+            "confidence": 0.0,
         }
 
     # ---------------- Similarity Search ----------------
-    results = similarity_search(
+    results: List[Result] = similarity_search(
         query=question,
         index=index,
         metadata=metadata,
-        top_k=top_k
+        top_k=top_k,
     )
 
-    if not results:
-        return {
-            "answer": "the question is irrelavant",
-            "sources": [],
-            "confidence": 0.0
-        }
+    # ---------------- Context Construction ----------------
+    if results:
+        context = "\n\n".join(
+            f"[Page {r['page']}]\n{r['text']}" for r in results
+        )
+    else:
+        # fallback to first chunks
+        context = "\n\n".join(
+            f"[Page {m['page']}]\n{m['text']}" for m in metadata[:5]
+        )
 
-    # ---------------- Build Context ----------------
-    context_chunks: List[str] = []
-    sources: List[Dict] = []
-    distances: List[float] = []
-
-    for r in results:
-        context_chunks.append(f"[Page {r['page']}]\n{r['text']}")
-        sources.append({
-            "page": r["page"],
-            "distance": round(r["distance"], 4)
-        })
-        distances.append(r["distance"])
-
-    context = "\n\n".join(context_chunks)
-
-    # ---------------- Entity Extraction (Fast Answers) ----------------
+    # ---------------- Entity Shortcuts ----------------
     entities = extract_entities(context)
-    q = question.lower()
+    q_lower = question.lower()
 
-    ENTITY_RULES = [
-        ("emails", ["email", "mail"]),
-        ("phones", ["phone", "mobile", "contact"]),
-        ("urls", ["website", "url", "link"]),
-        ("dates", ["date", "dob", "issued"]),
-        ("amounts", ["amount", "salary", "price", "total"]),
-    ]
+    ENTITY_MAP = {
+        "emails": ["email", "mail"],
+        "phones": ["phone", "mobile", "contact"],
+        "urls": ["website", "url", "link"],
+        "dates": ["date", "dob", "issued"],
+        "amounts": ["amount", "price", "total"],
+    }
 
-    for entity_key, keywords in ENTITY_RULES:
-        if any(word in q for word in keywords) and entities.get(entity_key):
+    for key, keywords in ENTITY_MAP.items():
+        if any(k in q_lower for k in keywords) and entities.get(key):
             return {
-                "answer": ", ".join(entities[entity_key]),
-                "sources": sources,
-                "confidence": 1.0
+                "answer": ", ".join(entities[key]),
+                "sources": results,
+                "confidence": 1.0,
             }
 
-    # ---------------- LLM Reasoning ----------------
-    answer_tokens = []
+    # ---------------- LLM Generation ----------------
+    answer_tokens: List[str] = []
 
     for token in ask_llm_stream(context, question):
         answer_tokens.append(token)
 
-    answer = "".join(answer_tokens).strip()
+    answer: str = "".join(answer_tokens).strip()
 
     if not answer:
-        answer = "the question is irrelavant"
+        answer = "The question goes beyond the document content."
 
     # ---------------- Confidence Score ----------------
-    confidence = round(
-        1 / (1 + (sum(distances) / max(len(distances), 1))),
+    confidence: float = round(
+        1 / (1 + len(results)),
         3
     )
 
@@ -114,14 +111,14 @@ def answer_question(
         log_interaction(
             question=question,
             answer=answer,
-            sources=sources,
-            confidence=confidence
+            sources=results,
+            confidence=confidence,
         )
     except Exception:
-        pass  # Logging should never break main flow
+        pass  # Never break app
 
     return {
         "answer": answer,
-        "sources": sources,
-        "confidence": confidence
+        "sources": results,
+        "confidence": confidence,
     }
