@@ -1,10 +1,34 @@
-venv/
+# Python
 __pycache__/
-data/uploads/
-data/vectorstore/
-data/analytics/
-*.faiss
-*.pkl
-analytics_logs.json
-.env
-.devcontainer/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+*.pyc
+
+# Data directories (don't upload user data)
+data/uploads/*
+data/vectorstore/*
+data/analytics/*
+
+# Keep directory structure
+!data/uploads/.gitkeep
+!data/vectorstore/.gitkeep
+!data/analytics/.gitkeep
+
+# Secrets (IMPORTANT - don't upload API keys!)
+.streamlit/secrets.toml
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test files
+test_groq.py
+test_ollama.py
