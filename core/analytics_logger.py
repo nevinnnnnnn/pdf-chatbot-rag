@@ -3,20 +3,11 @@ import os
 from datetime import datetime
 from typing import List, Dict, Optional
 
-
-# -----------------------------
 # Configuration
-# -----------------------------
-
 ANALYTICS_DIR = "data/analytics"
 ANALYTICS_FILE = os.path.join(ANALYTICS_DIR, "interactions.json")
 
 os.makedirs(ANALYTICS_DIR, exist_ok=True)
-
-
-# -----------------------------
-# Logger Function
-# -----------------------------
 
 def log_interaction(
     question: str,
@@ -26,8 +17,13 @@ def log_interaction(
 ) -> None:
     """
     Logs user interactions safely into a JSON file.
+    
+    Args:
+        question: User's question
+        answer: Assistant's answer
+        sources: List of source documents used
+        confidence: Confidence score (optional)
     """
-
     log_entry = {
         "timestamp": datetime.utcnow().isoformat(),
         "question": question,
@@ -44,11 +40,12 @@ def log_interaction(
             with open(ANALYTICS_FILE, "r", encoding="utf-8") as f:
                 try:
                     data = json.load(f)
+                    if not isinstance(data, list):
+                        data = []
                 except json.JSONDecodeError:
                     data = []
         else:
             data = []
-            
 
         data.append(log_entry)
 

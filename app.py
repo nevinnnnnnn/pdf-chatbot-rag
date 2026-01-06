@@ -4,9 +4,9 @@ from typing import List, Dict, Any
 import streamlit as st
 
 # Custom imports
-from core.pdf_processor import process_pdf # type: ignore
-from core.embeddings import create_vector_store # type: ignore
-from core.qa_engine import answer_question # type: ignore
+from core.pdf_processor import process_pdf  # type: ignore
+from core.embeddings import create_vector_store  # type: ignore
+from core.qa_engine import answer_question  # type: ignore
 
 # Constants
 UPLOAD_DIR = "data/uploads"
@@ -26,6 +26,8 @@ if "active_chat" not in st.session_state:
     st.session_state["active_chat"] = "Chat 1"
 if "configs" not in st.session_state:
     st.session_state["configs"] = {"Chat 1": {"indexed": False}}
+if "processed_files" not in st.session_state:
+    st.session_state["processed_files"] = {}
 
 # Sidebar Logic
 with st.sidebar:
@@ -41,42 +43,56 @@ with st.sidebar:
     # Radio selection for active chat
     chat_options = list(st.session_state.chats.keys())
     st.session_state.active_chat = st.radio(
-        "Select Chat", 
+        "Select Chat",
         options=chat_options,
         index=chat_options.index(st.session_state.active_chat)
     )
 
     st.divider()
-    uploaded = st.file_uploader("Upload PDF", type=["pdf"])
+    uploaded = st.file_uploader("Upload PDF", type=["pdf"], key="pdf_uploader")
 
     if uploaded:
-        safe_chat_id = str(st.session_state.active_chat).replace(" ", "_")
-        pdf_path = os.path.join(UPLOAD_DIR, f"{safe_chat_id}.pdf")
-        vector_path = os.path.join(VECTOR_DIR, safe_chat_id)
+        # Create unique file identifier
+        file_id = f"{st.session_state.active_chat}_{uploaded.name}_{uploaded.size}"
+        
+        # Only process if this exact file hasn't been processed for this chat
+        if st.session_state.processed_files.get(st.session_state.active_chat) != file_id:
+            safe_chat_id = str(st.session_state.active_chat).replace(" ", "_")
+            pdf_path = os.path.join(UPLOAD_DIR, f"{safe_chat_id}.pdf")
+            vector_path = os.path.join(VECTOR_DIR, safe_chat_id)
 
-        with open(pdf_path, "wb") as f:
-            f.write(uploaded.getbuffer())
+            try:
+                with open(pdf_path, "wb") as f:
+                    f.write(uploaded.getbuffer())
 
-        with st.spinner("Indexing PDF..."):
-            docs: List[Any] = process_pdf(pdf_path)
-            create_vector_store(docs, vector_path)
-
-        st.session_state.configs[st.session_state.active_chat]["indexed"] = True
-        st.session_state.chats[st.session_state.active_chat] = []
-        st.success("PDF indexed!")
+                with st.spinner("Processing PDF..."):
+                    docs: List[Any] = process_pdf(pdf_path)
+                    
+                    if not docs:
+                        st.error("No text could be extracted from this PDF. It might be an image-based PDF.")
+                    else:
+                        with st.spinner(f"Indexing {len(docs)} chunks..."):
+                            create_vector_store(docs, vector_path)
+                        
+                        st.session_state.configs[st.session_state.active_chat]["indexed"] = True
+                        st.session_state.processed_files[st.session_state.active_chat] = file_id
+                        st.success(f"✅ PDF indexed successfully! ({len(docs)} chunks)")
+                        
+            except Exception as e:
+                st.error(f"Error processing PDF: {str(e)}")
+                st.session_state.configs[st.session_state.active_chat]["indexed"] = False
 
 # Main Chat Area
 active_chat_name = str(st.session_state.active_chat)
-# Reference the persistent list directly from session state
 history = st.session_state.chats[active_chat_name]
 config = st.session_state.configs.get(active_chat_name, {"indexed": False})
 
-# 2. Display message history FIRST (This keeps history visible while typing)
+# Display message history
 for msg in history:
     with st.chat_message(msg["role"]):
         st.markdown(msg["content"])
 
-# 3. Interaction logic
+# Interaction logic
 if config.get("indexed"):
     user_input = st.chat_input("Ask something about your PDF...")
 
@@ -85,7 +101,7 @@ if config.get("indexed"):
         with st.chat_message("user"):
             st.markdown(user_input)
         
-        # Save to session_state so it persists during the assistant's processing rerun
+        # Save to session_state
         st.session_state.chats[active_chat_name].append({"role": "user", "content": user_input})
 
         # Generate Assistant Response
@@ -93,28 +109,43 @@ if config.get("indexed"):
             placeholder = st.empty()
             
             safe_chat_id = active_chat_name.replace(" ", "_")
-            result: Dict[str, Any] = answer_question(
-                user_input,
-                vector_store_path=os.path.join(VECTOR_DIR, safe_chat_id)
-            )
-
-            full_response = result.get("answer", "I couldn't find an answer.")
             
-            # Streaming effect
-            displayed_text = ""
-            for word in full_response.split():
-                displayed_text += word + " "
-                placeholder.markdown(displayed_text + "▌")
-                time.sleep(0.02)
-            placeholder.markdown(full_response)
+            try:
+                result: Dict[str, Any] = answer_question(
+                    user_input,
+                    vector_store_path=os.path.join(VECTOR_DIR, safe_chat_id)
+                )
 
-        # 4. Save assistant response to session_state
+                full_response = result.get("answer", "I couldn't find an answer.")
+                
+                # Streaming effect
+                displayed_text = ""
+                for word in full_response.split():
+                    displayed_text += word + " "
+                    placeholder.markdown(displayed_text + "▌")
+                    time.sleep(0.02)
+                placeholder.markdown(full_response)
+                
+                # Display sources if available
+                if result.get("sources"):
+                    with st.expander("📚 Sources"):
+                        for idx, source in enumerate(result["sources"], 1):
+                            st.write(f"**Source {idx}** (Page {source['page']}):")
+                            st.write(source['text'][:200] + "...")
+                            st.write(f"_Relevance score: {source.get('distance', 'N/A')}_")
+                            st.divider()
+
+            except Exception as e:
+                full_response = f"Error: {str(e)}"
+                placeholder.markdown(full_response)
+
+        # Save assistant response to session_state
         st.session_state.chats[active_chat_name].append({
             "role": "assistant",
             "content": full_response
         })
         
-        # Force rerun to clear the input box and lock in the history
+        # Force rerun to clear the input box
         st.rerun()
 else:
-    st.info("Please upload and index a PDF in the sidebar to start chatting.")
+    st.info("👈 Please upload and index a PDF in the sidebar to start chatting.")
