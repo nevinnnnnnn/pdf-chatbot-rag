@@ -1,5 +1,6 @@
 import os
 import time
+import pickle
 from typing import List, Dict, Any
 import streamlit as st
 
@@ -17,7 +18,7 @@ os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(VECTOR_DIR, exist_ok=True)
 
 st.set_page_config(page_title="PDF Chatbot", page_icon="📄", layout="centered")
-st.title("📄 PDF Chatbot")
+st.title("📄 PDF Chatbot with Vision 👁️")
 
 # 1. Initialize Session State
 if "chats" not in st.session_state:
@@ -65,18 +66,29 @@ with st.sidebar:
                 with open(pdf_path, "wb") as f:
                     f.write(uploaded.getbuffer())
 
-                with st.spinner("Processing PDF..."):
-                    docs: List[Any] = process_pdf(pdf_path)
+                with st.spinner("Processing PDF (extracting text and images)..."):
+                    # Process PDF and extract images
+                    docs, page_images = process_pdf(pdf_path)
                     
                     if not docs:
-                        st.error("No text could be extracted from this PDF. It might be an image-based PDF.")
+                        st.error("No text could be extracted from this PDF.")
                     else:
                         with st.spinner(f"Indexing {len(docs)} chunks..."):
                             create_vector_store(docs, vector_path)
                         
+                        # Save images separately
+                        if page_images:
+                            images_path = os.path.join(vector_path, "images.pkl")
+                            with open(images_path, "wb") as f:
+                                pickle.dump(page_images, f)
+                            
+                            total_images = sum(len(imgs) for imgs in page_images.values())
+                            st.success(f"✅ PDF indexed! ({len(docs)} text chunks, {total_images} images)")
+                        else:
+                            st.success(f"✅ PDF indexed! ({len(docs)} text chunks)")
+                        
                         st.session_state.configs[st.session_state.active_chat]["indexed"] = True
                         st.session_state.processed_files[st.session_state.active_chat] = file_id
-                        st.success(f"✅ PDF indexed successfully! ({len(docs)} chunks)")
                         
             except Exception as e:
                 st.error(f"Error processing PDF: {str(e)}")
@@ -94,7 +106,7 @@ for msg in history:
 
 # Interaction logic
 if config.get("indexed"):
-    user_input = st.chat_input("Ask something about your PDF...")
+    user_input = st.chat_input("Ask about your PDF (text or images)...")
 
     if user_input:
         # Display user message immediately
@@ -126,12 +138,18 @@ if config.get("indexed"):
                     time.sleep(0.02)
                 placeholder.markdown(full_response)
                 
+                # Show if vision was used
+                if result.get("used_vision"):
+                    st.caption("👁️ Analyzed with vision model (images included)")
+                
                 # Display sources if available
                 if result.get("sources"):
                     with st.expander("📚 Sources"):
                         for idx, source in enumerate(result["sources"], 1):
                             st.write(f"**Source {idx}** (Page {source['page']}):")
                             st.write(source['text'][:200] + "...")
+                            if source.get('has_images'):
+                                st.caption("📷 This page contains images")
                             st.write(f"_Relevance score: {source.get('distance', 'N/A')}_")
                             st.divider()
 
@@ -149,3 +167,4 @@ if config.get("indexed"):
         st.rerun()
 else:
     st.info("👈 Please upload and index a PDF in the sidebar to start chatting.")
+    st.caption("✨ Now with vision support for images, charts, and diagrams!")

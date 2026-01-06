@@ -1,6 +1,10 @@
 from pypdf import PdfReader
+import fitz  # PyMuPDF
+import base64
 import re
 from typing import List, Dict, Any
+from io import BytesIO
+from PIL import Image
 
 def clean_text(text: str) -> str:
     """Cleans null bytes and extra whitespace from text."""
@@ -8,10 +12,63 @@ def clean_text(text: str) -> str:
     text = re.sub(r"\s+", " ", text)
     return text.strip()
 
-def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> List[Dict[str, Any]]:
+def extract_images_from_pdf(pdf_path: str, max_images_per_page: int = 3) -> Dict[int, List[str]]:
     """
-    Reads a PDF and returns a list of text chunks with page numbers.
-    Uses sentence-aware chunking to avoid breaking mid-sentence.
+    Extracts images from PDF and returns them as base64 strings organized by page.
+    
+    Args:
+        pdf_path: Path to the PDF file
+        max_images_per_page: Maximum number of images to extract per page
+    
+    Returns:
+        Dictionary mapping page numbers to lists of base64-encoded images
+    """
+    try:
+        doc = fitz.open(pdf_path)
+        page_images = {}
+        
+        for page_num in range(len(doc)):
+            page = doc[page_num]
+            image_list = page.get_images()
+            
+            page_images[page_num + 1] = []
+            
+            # Limit images per page to avoid overwhelming the API
+            for img_index, img in enumerate(image_list[:max_images_per_page]):
+                try:
+                    xref = img[0]
+                    base_image = doc.extract_image(xref)
+                    image_bytes = base_image["image"]
+                    
+                    # Convert to PIL Image for processing
+                    pil_image = Image.open(BytesIO(image_bytes))
+                    
+                    # Resize large images to reduce token usage
+                    max_size = 1024
+                    if pil_image.width > max_size or pil_image.height > max_size:
+                        pil_image.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
+                    
+                    # Convert to JPEG and base64
+                    buffer = BytesIO()
+                    pil_image.convert('RGB').save(buffer, format='JPEG', quality=85)
+                    image_base64 = base64.b64encode(buffer.getvalue()).decode()
+                    
+                    page_images[page_num + 1].append(image_base64)
+                    
+                except Exception as e:
+                    print(f"Error extracting image {img_index} from page {page_num + 1}: {e}")
+                    continue
+        
+        doc.close()
+        return page_images
+        
+    except Exception as e:
+        print(f"Error extracting images from PDF: {e}")
+        return {}
+
+def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> tuple[List[Dict[str, Any]], Dict[int, List[str]]]:
+    """
+    Reads a PDF and returns text chunks with page numbers AND extracted images.
     
     Args:
         pdf_path: Path to the PDF file
@@ -19,8 +76,14 @@ def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> Li
         overlap: Number of characters to overlap between chunks
     
     Returns:
-        List of dictionaries containing text chunks and page numbers
+        Tuple of (text_documents, page_images)
+        - text_documents: List of dictionaries containing text chunks and page numbers
+        - page_images: Dictionary mapping page numbers to lists of base64 images
     """
+    # Extract images
+    page_images = extract_images_from_pdf(pdf_path)
+    
+    # Extract text
     try:
         reader = PdfReader(pdf_path)
     except Exception as e:
@@ -36,21 +99,28 @@ def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> Li
             continue
             
         if not text or len(text.strip()) < 10:
+            # If no text but has images, add a placeholder
+            if page_num in page_images and page_images[page_num]:
+                documents.append({
+                    "text": f"[Page {page_num} contains images but no extractable text]",
+                    "page": page_num,
+                    "has_images": True
+                })
             continue
 
         text = clean_text(text)
         
-        # Split into sentences to avoid breaking mid-sentence
+        # Split into sentences
         sentences = re.split(r'(?<=[.!?])\s+', text)
         
         current_chunk = ""
         for sentence in sentences:
-            # If adding this sentence exceeds chunk_size, save current chunk
             if len(current_chunk) + len(sentence) > chunk_size and current_chunk:
                 if len(current_chunk.strip()) >= 100:
                     documents.append({
                         "text": current_chunk.strip(),
-                        "page": page_num
+                        "page": page_num,
+                        "has_images": page_num in page_images and len(page_images[page_num]) > 0
                     })
                 # Start new chunk with overlap
                 words = current_chunk.split()
@@ -59,14 +129,15 @@ def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> Li
             else:
                 current_chunk += sentence + " "
         
-        # Add remaining text from this page
+        # Add remaining text
         if len(current_chunk.strip()) >= 100:
             documents.append({
                 "text": current_chunk.strip(),
-                "page": page_num
+                "page": page_num,
+                "has_images": page_num in page_images and len(page_images[page_num]) > 0
             })
 
     if not documents:
-        raise Exception("No text content could be extracted from the PDF")
+        raise Exception("No text or images could be extracted from the PDF")
     
-    return documents
+    return documents, page_images

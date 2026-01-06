@@ -11,19 +11,19 @@ model = SentenceTransformer("all-MiniLM-L6-v2")
 def create_vector_store(documents: List[Dict[str, Any]], save_path: str) -> Tuple[Any, List[Dict[str, Any]]]:
     """
     Creates a FAISS index from document chunks and saves it along with metadata.
-    
-    Args:
-        documents: List of dicts containing 'text' and 'page' keys.
-        save_path: Directory where the index and metadata will be stored.
-    
-    Returns:
-        Tuple of (index, metadata)
     """
     if not documents:
         raise ValueError("No documents provided for vector store creation")
     
     texts: List[str] = [d["text"] for d in documents]
-    metadata: List[Dict[str, Any]] = [{"page": d["page"], "text": d["text"]} for d in documents]
+    metadata: List[Dict[str, Any]] = [
+        {
+            "page": d["page"], 
+            "text": d["text"],
+            "has_images": d.get("has_images", False)
+        } 
+        for d in documents
+    ]
 
     # Encode texts into embeddings
     embeddings = model.encode(texts, show_progress_bar=True).astype("float32")
@@ -47,12 +47,6 @@ def create_vector_store(documents: List[Dict[str, Any]], save_path: str) -> Tupl
 def load_vector_store(path: str) -> Tuple[Any, List[Dict[str, Any]]]:
     """
     Loads an existing FAISS index and its associated metadata from disk.
-    
-    Args:
-        path: Directory containing the vector store
-    
-    Returns:
-        Tuple of (index, metadata)
     """
     index_path = os.path.join(path, "index.faiss")
     metadata_path = os.path.join(path, "metadata.pkl")
@@ -81,15 +75,6 @@ def similarity_search(
 ) -> List[Dict[str, Any]]:
     """
     Converts a query into an embedding and retrieves the top_k most relevant chunks.
-    
-    Args:
-        query: Search query string
-        index: FAISS index
-        metadata: List of document metadata
-        top_k: Number of results to return
-    
-    Returns:
-        List of relevant document chunks with scores
     """
     if not query.strip():
         return []
@@ -107,7 +92,8 @@ def similarity_search(
             results.append({
                 "page": metadata[idx]["page"],
                 "text": metadata[idx]["text"],
-                "distance": float(dist)
+                "distance": float(dist),
+                "has_images": metadata[idx].get("has_images", False)
             })
 
     return results
