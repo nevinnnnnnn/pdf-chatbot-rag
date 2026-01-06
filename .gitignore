@@ -20,6 +20,7 @@ data/analytics/*
 
 # Secrets (IMPORTANT - don't upload API keys!)
 .streamlit/secrets.toml
+.env
 
 # IDE
 .vscode/
