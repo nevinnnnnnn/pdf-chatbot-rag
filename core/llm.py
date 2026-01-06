@@ -6,7 +6,7 @@ from typing import Generator
 
 # Constants
 OLLAMA_HOST: str = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-MODEL_NAME: str = os.getenv("MODEL_NAME", "mistral:7b-instruct")
+MODEL_NAME: str = os.getenv("MODEL_NAME", "qwen2.5:3b")
 
 def check_ollama_connection() -> bool:
     """Verify Ollama is accessible and responsive."""
