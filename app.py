@@ -5,9 +5,9 @@ from typing import List, Dict, Any
 import streamlit as st
 
 # Custom imports
-from core.pdf_processor import process_pdf  # type: ignore
-from core.embeddings import create_vector_store  # type: ignore
-from core.qa_engine import answer_question  # type: ignore
+from core.pdf_processor import process_pdf
+from core.embeddings import create_vector_store
+from core.qa_engine import answer_question
 
 # Constants
 UPLOAD_DIR = "data/uploads"
@@ -17,46 +17,82 @@ VECTOR_DIR = "data/vectorstore"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 os.makedirs(VECTOR_DIR, exist_ok=True)
 
-st.set_page_config(page_title="PDF Chatbot", page_icon="📄", layout="centered")
-st.title("📄 PDF Chatbot with Vision 👁️")
+# Page Configuration
+st.set_page_config(
+    page_title="ChatGPT 5.2",
+    page_icon="⚡",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# 1. Initialize Session State
+# Load custom CSS
+def load_css():
+    try:
+        with open("style.css") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    except:
+        pass
+
+load_css()
+
+# Initialize Session State
 if "chats" not in st.session_state:
-    st.session_state["chats"] = {"Chat 1": []}
+    st.session_state["chats"] = {"New chat": []}
 if "active_chat" not in st.session_state:
-    st.session_state["active_chat"] = "Chat 1"
+    st.session_state["active_chat"] = "New chat"
 if "configs" not in st.session_state:
-    st.session_state["configs"] = {"Chat 1": {"indexed": False}}
+    st.session_state["configs"] = {"New chat": {"indexed": False}}
 if "processed_files" not in st.session_state:
     st.session_state["processed_files"] = {}
 
-# Sidebar Logic
+# Sidebar
 with st.sidebar:
-    st.header("💬 Chats")
-
-    if st.button("➕ New Chat"):
-        new_chat_name = f"Chat {len(st.session_state.chats) + 1}"
+    # Header with Logo
+    st.markdown("""
+        <div class='sidebar-title'>
+            <span style='font-size: 24px;'>⚡</span>
+            <span>ChatGPT 5.2</span>
+        </div>
+    """, unsafe_allow_html=True)
+    
+    # New Chat Button
+    if st.button("🖊️ New chat", use_container_width=True):
+        chat_count = len([k for k in st.session_state.chats.keys()])
+        new_chat_name = f"Chat {chat_count + 1}"
         st.session_state.chats[new_chat_name] = []
         st.session_state.configs[new_chat_name] = {"indexed": False}
         st.session_state.active_chat = new_chat_name
         st.rerun()
-
-    # Radio selection for active chat
+    
+    # Section dividers
+    st.markdown("<div class='sidebar-section-header'>YOUR CHATS</div>", unsafe_allow_html=True)
+    
+    # Chat Selection
     chat_options = list(st.session_state.chats.keys())
-    st.session_state.active_chat = st.radio(
+    selected_chat = st.radio(
         "Select Chat",
         options=chat_options,
-        index=chat_options.index(st.session_state.active_chat)
+        index=chat_options.index(st.session_state.active_chat),
+        label_visibility="collapsed"
     )
-
-    st.divider()
-    uploaded = st.file_uploader("Upload PDF", type=["pdf"], key="pdf_uploader")
-
+    
+    if selected_chat != st.session_state.active_chat:
+        st.session_state.active_chat = selected_chat
+        st.rerun()
+    
+    st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
+    st.markdown("<div class='sidebar-section-header'>📄 DOCUMENT</div>", unsafe_allow_html=True)
+    
+    # PDF Upload
+    uploaded = st.file_uploader(
+        "Drag & drop PDF",
+        type=["pdf"],
+        label_visibility="collapsed"
+    )
+    
     if uploaded:
-        # Create unique file identifier
         file_id = f"{st.session_state.active_chat}_{uploaded.name}_{uploaded.size}"
         
-        # Only process if this exact file hasn't been processed for this chat
         if st.session_state.processed_files.get(st.session_state.active_chat) != file_id:
             safe_chat_id = str(st.session_state.active_chat).replace(" ", "_")
             pdf_path = os.path.join(UPLOAD_DIR, f"{safe_chat_id}.pdf")
@@ -66,58 +102,83 @@ with st.sidebar:
                 with open(pdf_path, "wb") as f:
                     f.write(uploaded.getbuffer())
 
-                with st.spinner("Processing PDF (extracting text and images)..."):
-                    # Process PDF and extract images
+                with st.spinner("Processing PDF..."):
                     docs, page_images = process_pdf(pdf_path)
                     
                     if not docs:
-                        st.error("No text could be extracted from this PDF.")
+                        st.error("No text could be extracted")
                     else:
                         with st.spinner(f"Indexing {len(docs)} chunks..."):
                             create_vector_store(docs, vector_path)
                         
-                        # Save images separately
                         if page_images:
                             images_path = os.path.join(vector_path, "images.pkl")
                             with open(images_path, "wb") as f:
                                 pickle.dump(page_images, f)
                             
                             total_images = sum(len(imgs) for imgs in page_images.values())
-                            st.success(f"✅ PDF indexed! ({len(docs)} text chunks, {total_images} images)")
+                            st.success(f"✅ {len(docs)} chunks, {total_images} images")
                         else:
-                            st.success(f"✅ PDF indexed! ({len(docs)} text chunks)")
+                            st.success(f"✅ {len(docs)} chunks indexed")
                         
                         st.session_state.configs[st.session_state.active_chat]["indexed"] = True
                         st.session_state.processed_files[st.session_state.active_chat] = file_id
                         
             except Exception as e:
-                st.error(f"Error processing PDF: {str(e)}")
+                st.error(f"Error: {str(e)}")
                 st.session_state.configs[st.session_state.active_chat]["indexed"] = False
+    
+    # Document Status
+    if st.session_state.configs.get(st.session_state.active_chat, {}).get("indexed"):
+        st.markdown("""
+            <div class='doc-status'>
+                <div class='doc-status-label'>📄 DOCUMENT LOADED</div>
+                <div class='doc-status-text'>Ready to answer</div>
+            </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+            <div class='doc-status'>
+                <div class='doc-status-label'>No document</div>
+                <div class='doc-status-text' style='color: #8e8e8e;'>Upload PDF above</div>
+            </div>
+        """, unsafe_allow_html=True)
 
 # Main Chat Area
+st.markdown("<div class='main-chat-container'>", unsafe_allow_html=True)
+
 active_chat_name = str(st.session_state.active_chat)
 history = st.session_state.chats[active_chat_name]
 config = st.session_state.configs.get(active_chat_name, {"indexed": False})
 
-# Display message history
+# Welcome Screen
+if len(history) == 0:
+    st.markdown("""
+        <div class='welcome-screen'>
+                <h1>
+            <div class='welcome-title'>UPLOAD A PDF AND KNOW MORE ABOUT IT!!</div>
+                </h1>
+        </div>
+    """, unsafe_allow_html=True)
+
+# Display Messages
 for msg in history:
-    with st.chat_message(msg["role"]):
+    with st.chat_message(msg["role"], avatar="🧑" if msg["role"] == "user" else "⚡"):
         st.markdown(msg["content"])
 
-# Interaction logic
+st.markdown("</div>", unsafe_allow_html=True)
+
+# Chat Input
 if config.get("indexed"):
-    user_input = st.chat_input("Ask about your PDF (text or images)...")
+    user_input = st.chat_input("Ask anything")
 
     if user_input:
-        # Display user message immediately
-        with st.chat_message("user"):
+        with st.chat_message("user", avatar="🧑"):
             st.markdown(user_input)
         
-        # Save to session_state
         st.session_state.chats[active_chat_name].append({"role": "user", "content": user_input})
 
-        # Generate Assistant Response
-        with st.chat_message("assistant"):
+        with st.chat_message("assistant", avatar="⚡"):
             placeholder = st.empty()
             
             safe_chat_id = active_chat_name.replace(" ", "_")
@@ -138,33 +199,30 @@ if config.get("indexed"):
                     time.sleep(0.02)
                 placeholder.markdown(full_response)
                 
-                # Show if vision was used
+                # Vision indicator
                 if result.get("used_vision"):
-                    st.caption("👁️ Analyzed with vision model (images included)")
+                    st.caption("👁️ Analyzed with vision")
                 
-                # Display sources if available
+                # Sources
                 if result.get("sources"):
-                    with st.expander("📚 Sources"):
+                    with st.expander("📚 View sources"):
                         for idx, source in enumerate(result["sources"], 1):
-                            st.write(f"**Source {idx}** (Page {source['page']}):")
-                            st.write(source['text'][:200] + "...")
+                            st.markdown(f"**Source {idx}** • Page {source['page']}")
+                            st.caption(source['text'][:150] + "...")
                             if source.get('has_images'):
-                                st.caption("📷 This page contains images")
-                            st.write(f"_Relevance score: {source.get('distance', 'N/A')}_")
-                            st.divider()
+                                st.caption("📷 Contains images")
+                            if idx < len(result["sources"]):
+                                st.divider()
 
             except Exception as e:
-                full_response = f"Error: {str(e)}"
+                full_response = f"⚠️ Error: {str(e)}"
                 placeholder.markdown(full_response)
 
-        # Save assistant response to session_state
         st.session_state.chats[active_chat_name].append({
             "role": "assistant",
             "content": full_response
         })
         
-        # Force rerun to clear the input box
         st.rerun()
 else:
-    st.info("👈 Please upload and index a PDF in the sidebar to start chatting.")
-    st.caption("✨ Now with vision support for images, charts, and diagrams!")
+    st.chat_input("Upload a PDF document to start", disabled=True)

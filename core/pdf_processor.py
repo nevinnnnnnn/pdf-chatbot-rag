@@ -2,7 +2,7 @@ from pypdf import PdfReader
 import fitz  # PyMuPDF
 import base64
 import re
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Tuple
 from io import BytesIO
 from PIL import Image
 
@@ -15,38 +15,46 @@ def clean_text(text: str) -> str:
 def extract_images_from_pdf(pdf_path: str, max_images_per_page: int = 3) -> Dict[int, List[str]]:
     """
     Extracts images from PDF and returns them as base64 strings organized by page.
-    
-    Args:
-        pdf_path: Path to the PDF file
-        max_images_per_page: Maximum number of images to extract per page
-    
-    Returns:
-        Dictionary mapping page numbers to lists of base64-encoded images
     """
+    print(f"🔍 Starting image extraction from: {pdf_path}")
+    
     try:
         doc = fitz.open(pdf_path)
         page_images = {}
+        total_images_found = 0
         
         for page_num in range(len(doc)):
             page = doc[page_num]
             image_list = page.get_images()
             
+            print(f"📄 Page {page_num + 1}: Found {len(image_list)} images")
+            
             page_images[page_num + 1] = []
             
-            # Limit images per page to avoid overwhelming the API
             for img_index, img in enumerate(image_list[:max_images_per_page]):
                 try:
                     xref = img[0]
                     base_image = doc.extract_image(xref)
                     image_bytes = base_image["image"]
                     
-                    # Convert to PIL Image for processing
+                    # Skip very small images (likely icons/logos)
+                    if len(image_bytes) < 1000:
+                        print(f"  ⏭️  Skipping small image ({len(image_bytes)} bytes)")
+                        continue
+                    
+                    # Convert to PIL Image
                     pil_image = Image.open(BytesIO(image_bytes))
                     
-                    # Resize large images to reduce token usage
+                    # Skip tiny dimensions
+                    if pil_image.width < 50 or pil_image.height < 50:
+                        print(f"  ⏭️  Skipping tiny image ({pil_image.width}x{pil_image.height})")
+                        continue
+                    
+                    # Resize large images
                     max_size = 1024
                     if pil_image.width > max_size or pil_image.height > max_size:
                         pil_image.thumbnail((max_size, max_size), Image.Resampling.LANCZOS)
+                        print(f"  📐 Resized to: {pil_image.width}x{pil_image.height}")
                     
                     # Convert to JPEG and base64
                     buffer = BytesIO()
@@ -54,38 +62,34 @@ def extract_images_from_pdf(pdf_path: str, max_images_per_page: int = 3) -> Dict
                     image_base64 = base64.b64encode(buffer.getvalue()).decode()
                     
                     page_images[page_num + 1].append(image_base64)
+                    total_images_found += 1
+                    print(f"  ✅ Extracted image {img_index + 1}")
                     
                 except Exception as e:
-                    print(f"Error extracting image {img_index} from page {page_num + 1}: {e}")
+                    print(f"  ❌ Error extracting image {img_index}: {e}")
                     continue
         
         doc.close()
+        print(f"✅ Total images extracted: {total_images_found}")
         return page_images
         
     except Exception as e:
-        print(f"Error extracting images from PDF: {e}")
+        print(f"❌ Error in image extraction: {e}")
         return {}
 
-def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> tuple[List[Dict[str, Any]], Dict[int, List[str]]]:
+def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> Tuple[List[Dict[str, Any]], Dict[int, List[str]]]:
     """
     Reads a PDF and returns text chunks with page numbers AND extracted images.
-    
-    Args:
-        pdf_path: Path to the PDF file
-        chunk_size: Target size for each chunk (characters)
-        overlap: Number of characters to overlap between chunks
-    
-    Returns:
-        Tuple of (text_documents, page_images)
-        - text_documents: List of dictionaries containing text chunks and page numbers
-        - page_images: Dictionary mapping page numbers to lists of base64 images
     """
-    # Extract images
+    print(f"\n🚀 Processing PDF: {pdf_path}")
+    
+    # Extract images FIRST
     page_images = extract_images_from_pdf(pdf_path)
     
     # Extract text
     try:
         reader = PdfReader(pdf_path)
+        print(f"📖 PDF has {len(reader.pages)} pages")
     except Exception as e:
         raise Exception(f"Failed to read PDF: {str(e)}")
     
@@ -95,17 +99,18 @@ def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> tu
         try:
             text = page.extract_text()
         except Exception as e:
-            print(f"Warning: Could not extract text from page {page_num}: {e}")
+            print(f"⚠️  Page {page_num}: Could not extract text - {e}")
             continue
             
         if not text or len(text.strip()) < 10:
-            # If no text but has images, add a placeholder
+            # If no text but has images, add placeholder
             if page_num in page_images and page_images[page_num]:
                 documents.append({
-                    "text": f"[Page {page_num} contains images but no extractable text]",
+                    "text": f"[Page {page_num} contains {len(page_images[page_num])} image(s) but minimal text]",
                     "page": page_num,
                     "has_images": True
                 })
+                print(f"📄 Page {page_num}: Images only")
             continue
 
         text = clean_text(text)
@@ -139,5 +144,8 @@ def process_pdf(pdf_path: str, chunk_size: int = 1000, overlap: int = 200) -> tu
 
     if not documents:
         raise Exception("No text or images could be extracted from the PDF")
+    
+    print(f"✅ Created {len(documents)} text chunks")
+    print(f"✅ Extracted images from {len([p for p in page_images.values() if p])} pages\n")
     
     return documents, page_images

@@ -1,0 +1,374 @@
+/* ===================================
+   CHATGPT-STYLE UI - DARK THEME
+   =================================== */
+
+/* Global Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Main Container */
+[data-testid="stAppViewContainer"] {
+    background-color: #212121 !important;
+}
+
+/* Sidebar Styling */
+[data-testid="stSidebar"] {
+    background-color: #171717 !important;
+    border-right: 1px solid #2f2f2f;
+}
+
+[data-testid="stSidebar"] > div:first-child {
+    padding-top: 24px;
+}
+
+/* Hide Streamlit branding */
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;}
+
+/* Sidebar Title */
+.sidebar-title {
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #2f2f2f;
+    margin-bottom: 16px;
+}
+
+/* New Chat Button */
+.stButton button {
+    background-color: transparent !important;
+    color: #ececec !important;
+    border: 1px solid #4d4d4d !important;
+    border-radius: 8px !important;
+    padding: 12px 16px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    width: 100%;
+    transition: all 0.2s ease !important;
+    text-align: left !important;
+}
+
+.stButton button:hover {
+    background-color: #2f2f2f !important;
+    border-color: #565656 !important;
+}
+
+/* Sidebar Section Headers */
+.sidebar-section-header {
+    color: #8e8e8e;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 16px 20px 8px 20px;
+    margin-top: 16px;
+}
+
+/* Radio Buttons (Chat Selection) */
+[data-testid="stRadio"] {
+    padding: 0 12px;
+}
+
+[data-testid="stRadio"] > div {
+    gap: 4px !important;
+}
+
+[data-testid="stRadio"] label {
+    background-color: transparent !important;
+    color: #ececec !important;
+    padding: 10px 12px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-size: 14px !important;
+}
+
+[data-testid="stRadio"] label:hover {
+    background-color: #2f2f2f !important;
+}
+
+[data-testid="stRadio"] label[data-baseweb="radio"] div:first-child {
+    display: none !important;
+}
+
+/* Selected Chat */
+[data-testid="stRadio"] label[aria-checked="true"] {
+    background-color: #2f2f2f !important;
+    font-weight: 500 !important;
+}
+
+/* File Uploader */
+[data-testid="stFileUploader"] {
+    background-color: #171717 !important;
+    border: 1px dashed #4d4d4d !important;
+    border-radius: 12px !important;
+    padding: 32px 20px !important;
+}
+
+[data-testid="stFileUploader"] section {
+    background-color: transparent !important;
+    border: none !important;
+}
+
+[data-testid="stFileUploader"] section > div {
+    color: #b4b4b4 !important;
+}
+
+/* Document Status Box */
+.doc-status {
+    background-color: #1a1a1a;
+    border: 1px solid #2f2f2f;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-top: 12px;
+}
+
+.doc-status-label {
+    color: #8e8e8e;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.doc-status-text {
+    color: #ececec;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* Main Chat Area */
+.main-chat-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px 120px 20px;
+}
+
+/* Welcome Screen */
+.welcome-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    color: #ececec;
+}
+
+.welcome-icon {
+    font-size: 48px;
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.welcome-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #ffffff;
+}
+
+.welcome-subtitle {
+    font-size: 16px;
+    color: #b4b4b4;
+    line-height: 1.6;
+    max-width: 600px;
+}
+
+/* Chat Messages */
+[data-testid="stChatMessage"] {
+    background-color: transparent !important;
+    border: none !important;
+    padding: 24px 0 !important;
+    max-width: 800px;
+    margin: 0 auto !important;
+}
+
+/* User Message */
+[data-testid="stChatMessage"][data-testid*="user"] {
+    background-color: transparent !important;
+}
+
+[data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] {
+    color: #ececec !important;
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+}
+
+/* Assistant Message */
+[data-testid="stChatMessage"]:not([data-testid*="user"]) {
+    background-color: #2f2f2f !important;
+    border-radius: 0 !important;
+    padding: 32px 0 !important;
+    margin: 0 -100vw !important;
+    padding-left: calc(50vw - 400px) !important;
+    padding-right: calc(50vw - 400px) !important;
+}
+
+/* Avatar Icons */
+[data-testid="stChatMessage"] img {
+    border-radius: 4px !important;
+    width: 32px !important;
+    height: 32px !important;
+}
+
+/* Chat Input */
+[data-testid="stChatInput"] {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: linear-gradient(to top, #212121 60%, transparent) !important;
+    padding: 24px 20px !important;
+    z-index: 1000 !important;
+}
+
+[data-testid="stChatInput"] > div {
+    max-width: 800px !important;
+    margin: 0 auto !important;
+    background-color: #2f2f2f !important;
+    border: 1px solid #4d4d4d !important;
+    border-radius: 24px !important;
+    box-shadow: 0 0 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border: none !important;
+    font-size: 16px !important;
+    padding: 16px 20px !important;
+    resize: none !important;
+}
+
+[data-testid="stChatInput"] textarea:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+[data-testid="stChatInput"] textarea::placeholder {
+    color: #8e8e8e !important;
+}
+
+/* Send Button */
+[data-testid="stChatInput"] button {
+    background-color: #ffffff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    width: 32px !important;
+    height: 32px !important;
+    padding: 0 !important;
+    margin-right: 8px !important;
+}
+
+[data-testid="stChatInput"] button:hover {
+    background-color: #e5e5e5 !important;
+}
+
+[data-testid="stChatInput"] button:disabled {
+    background-color: #565656 !important;
+    opacity: 0.5 !important;
+}
+
+/* Expander (Sources) */
+[data-testid="stExpander"] {
+    background-color: #1a1a1a !important;
+    border: 1px solid #2f2f2f !important;
+    border-radius: 8px !important;
+    margin-top: 16px !important;
+}
+
+[data-testid="stExpander"] summary {
+    color: #b4b4b4 !important;
+    font-size: 14px !important;
+    padding: 12px 16px !important;
+}
+
+[data-testid="stExpander"] [data-testid="stMarkdownContainer"] {
+    color: #8e8e8e !important;
+    font-size: 13px !important;
+}
+
+/* Divider */
+hr {
+    border-color: #2f2f2f !important;
+    margin: 12px 0 !important;
+}
+
+/* Caption Text */
+.stCaption {
+    color: #8e8e8e !important;
+    font-size: 12px !important;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #171717;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4d4d4d;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #565656;
+}
+
+/* Loading Spinner */
+[data-testid="stSpinner"] > div {
+    border-color: #ffffff transparent transparent transparent !important;
+}
+
+/* Success/Error Messages */
+[data-testid="stAlert"] {
+    background-color: #1a1a1a !important;
+    border: 1px solid #2f2f2f !important;
+    border-radius: 8px !important;
+    color: #ececec !important;
+}
+
+/* Info Messages */
+[data-testid="stAlert"][data-baseweb="notification"] {
+    background-color: #1a3a52 !important;
+    border-color: #2563eb !important;
+}
+
+/* Success Messages */
+.element-container:has([data-testid="stAlert"]) [data-testid="stAlert"]:has-text("✅") {
+    background-color: #1a4d2e !important;
+    border-color: #10b981 !important;
+}
+
+/* Error Messages */
+.element-container:has([data-testid="stAlert"]) [data-testid="stAlert"]:has-text("❌") {
+    background-color: #4d1a1a !important;
+    border-color: #ef4444 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    [data-testid="stChatMessage"]:not([data-testid*="user"]) {
+        padding-left: 20px !important;
+        padding-right: 20px !important;
+    }
+    
+    .main-chat-container {
+        padding: 20px 16px 120px 16px;
+    }
+}
