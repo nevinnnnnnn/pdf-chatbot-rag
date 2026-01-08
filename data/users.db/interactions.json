@@ -1,0 +1,1624 @@
+[
+  {
+    "timestamp": "2025-12-25T09:41:32.612181",
+    "question": "What is the role mentioned in the resume?",
+    "answer": "The role mentioned in the resume is \"SEO Analyst\" | \"Digital Science Web Technologies Pvt. Ltd.\" (Nov 2024 - July 2025).",
+    "confidence": 0.3921,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.461
+      },
+      {
+        "page": 1,
+        "distance": 1.5409
+      },
+      {
+        "page": 1,
+        "distance": 1.6483
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T09:54:17.588995",
+    "question": "what is the name mentioned in the document?",
+    "answer": "P R A D U M N  S I N G H  J A D O N",
+    "confidence": 0.3674,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6842
+      },
+      {
+        "page": 1,
+        "distance": 1.7005
+      },
+      {
+        "page": 1,
+        "distance": 1.7806
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T09:59:50.946003",
+    "question": "tell me about all the experience that nevin has in this resume.",
+    "answer": "The question asked goes out of scope of the content provided in the uploaded pdf file. The document only provides information about Pradumna Singh Jodon's skills, professional summary, and soft skills, but does not mention Nevin. There is no experience mentioned for Nevin in this resume.",
+    "confidence": 0.3937,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.4138
+      },
+      {
+        "page": 1,
+        "distance": 1.5986
+      },
+      {
+        "page": 1,
+        "distance": 1.6081
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:03:44.694270",
+    "question": "tell me about all the experience that pradumn has in this resume.",
+    "answer": "The question asked goes out of scope of the content provided in the uploaded pdf file.",
+    "confidence": 0.4127,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3408
+      },
+      {
+        "page": 1,
+        "distance": 1.4399
+      },
+      {
+        "page": 1,
+        "distance": 1.4881
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:09:09.569535",
+    "question": "what experience does nevin have?",
+    "answer": "According to the provided context, Nevin is described as a \"detail-oriented Data Analyst\" with hands-on experience in data cleaning, exploratory data analysis, and dashboard creation. He excels in translating raw data into actionable insights across various domains such as SEO analytics and pharmacy operations.",
+    "confidence": 0.3674,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6743
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:11:44.665660",
+    "question": "is nevin an seo analyst?",
+    "answer": "The question asked goes out of scope of the content provided in the uploaded pdf file.",
+    "confidence": 0.4161,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3153
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:32:29.693067",
+    "question": "what is the pdf all about?",
+    "answer": "Thinking...\nOkay, so I need to figure out what the user's question is asking for. They asked, \"what is the pdf all about?\" Looking at the query history, they provided a document context which includes some pages but no PDF file mentioned.\n\nFirst, I should check if there's any information about a PDF in the given context. The document talks about Excel-based reporting, tracking, new product onboarding, job details for a QC Executive, and mentions supporting internal systems with data accuracy. There's no mention of any PDF files anywhere in this context.\n\nSince the user is asking specifically about a PDF that isn't present in the provided documents, I should adhere to the rules set out. The rules state that if the answer isn't covered in the document, I must say, \"The question is irrelevant or not covered in the document.\"\n\nI don't see any mention of a PDF file being attached or referenced here, so it's safe to conclude that the answer fits into the rule about not covering the topic.\n...done thinking.\n\nThe question is irrelevant or not covered in the document.",
+    "confidence": 0.3705,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6565
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:34:39.450349",
+    "question": "what is the job title?",
+    "answer": "Thinking...\nOkay, so I need to figure out the job title based on the provided document. Let me start by reading through each part carefully.\n\nThe first page mentions \"Job Title: QC Executive\" and \"Department: Quality Control / Product Data Management\". That seems straightforward; the job title is explicitly stated as QC Executive.\n\nLooking at the second page, it provides details about the responsibilities and requirements but doesn't change the job title. It talks about verifying data consistency, using Excel functions, understanding pharmaceutical terms like formulations, strengths, etc., and mentions experience in a QC or data management role.\n\nSo putting that together, the job title remains consistent as \"QC Executive\". I don't see any conflicting information elsewhere in the document that would suggest a different title. Therefore, the answer should be clear.\n...done thinking.\n\nThe job title is **QC Executive**.",
+    "confidence": 0.3959,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.1788
+      },
+      {
+        "page": 2,
+        "distance": 1.6461
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:36:59.583142",
+    "question": "what is the salary for the role?",
+    "answer": "Thinking...\nOkay, so I need to figure out what the salary is for the QC Executive role based on the provided document context. Let me go through each part step by step.\n\nFirst, looking at Page 1 of the document, it describes the job as a QC Executive in the Quality Control or Product Data Management department located in Ahmedabad, offering full-time employment. The job summary mentions ensuring accuracy, consistency, and completeness of product data in internal systems, supporting new product additions, and working with formulas. Hmm, but there's no mention of salary here.\n\nMoving on to Page 2, which provides the job requirements. Under the Pharma Product Familiarity section, it talks about understanding basic pharmaceutical terms like formulations, strengths, therapeutic classes, etc., and verifying data consistency according to pharma standards. Again, I don't see any information about salary in this part either.\n\nThe Requirements section mentions a Bachelorâ€™s degree, 0-1 years of experience in QC or data management, preferably in pharma or healthcare, and working knowledge of Microsoft Excel. No salary details are provided here as well.\n\nSo, after reviewing all pages, I don't see any information about the salary for this role. The documents focus on job duties, qualifications, and basic understanding rather than compensation.\n...done thinking.\n\nThe question is irrelevant or not covered in the document.",
+    "confidence": 0.3826,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.4934
+      },
+      {
+        "page": 2,
+        "distance": 1.6585
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T10:41:26.724083",
+    "question": "what is the salary mention for the role?",
+    "answer": "Thinking...\nOkay, I need to figure out the answer to the question: \"What is the salary mentioned for the role?\" Looking at the provided document context. \n\nFirst, I'll check each page. On Page 1, there's information about the job title and summary but no salary details. Page 2 talks about requirements like a bachelor's degree, experience, and Excel skills, but again, no salary info is mentioned.\n\nSo, since the document doesn't provide any salary information for this role, I should respond that the question is irrelevant or not covered in the document.\n...done thinking.\n\nThe question is irrelevant or not covered in the document.",
+    "confidence": 0.3873,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.4357
+      },
+      {
+        "page": 2,
+        "distance": 1.6491
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T12:14:34.333671",
+    "question": "what's the recent experience?",
+    "answer": "Thinking...\nAlright, let me try to figure out how to answer this query. The user is asking about my \"recent experience.\" From what I gather, they provided a document context which describes my role as a Data Analyst with a focus on SEO and sales analytics. \n\nFirst, looking at the document, there are three pages mentioned. Page 1 talks about examining key words, trends, CTR, conversion metrics using Excel and SEO tools, leading to a 22% increase in organic traffic. It also mentions building and maintaining SEO performance dashboards tracking KPIs like rankings, engagement, and traffic growth.\n\nPage 2 is the professional summary where I detail my expertise in data cleaning, exploratory data analysis, and dashboard creation across domains like SEO and pharmacy operations. I mention having a strong foundation in statistics and data modeling to support business decisions effectively and drive performance improvements.\n\nPage 3 discusses building machine learning models to predict employee attrition and performance, enhancing HR decision-making through data-driven insights and dashboards.\n\nThe user's question is about recent experience. Since the provided document doesn't specify when these experiences were recently achieved but does detail various projects up to a certain point, I can compile my skills and key achievements without dates.\n\nI should structure the answer to highlight my expertise in data analysis tools (Excel, SEO analytics), KPI tracking, professional summary of skills, and machine learning applications. Keeping it concise as per the rules.\n...done thinking.\n\nBased on the document context provided, my recent experience includes:\n\n- Conducting data analysis using Excel and SEO tools to optimize performance metrics such as CTR and conversion rates.\n- Building dashboards to track key performance indicators (KPIs) like rankings, engagement, and traffic growth.\n- Supporting business decisions through actionable insights derived from data cleaning and exploratory analysis.\n- Applying machine learning models to predict employee attrition and performance, enhancing HR decision-making.\n\nThese skills were developed while working in a detail-oriented data analyst role with hands-on experience in various domains.",
+    "confidence": 0.3551,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.798
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T12:21:56.366690",
+    "question": "what is the total experience?",
+    "answer": "Thinking...\nOkay, so I need to figure out the answer to the question \"what is the total experience?\" based on the provided document context. Let me read through the document carefully.\n\nLooking at page 1, it mentions that Data Analyst (SEO & Sales Analytics) Ahmedabad, Gujarat was examined for key word performance, traffic trends, CTR, and conversion metrics using Excel and SEO analytics tools. This resulted in a 22% increase in organic traffic and improved product-level visibility.\n\nAdditionally, the document talks about scrutinizing employee performance, attrition, salary, and departmental metrics using a correlation matrix to identify key drivers of retention and high/low performance. They cleaned, transformed, and standardized the employee dataset before conducting statistical analysis (correlation, probability, and hypothesis testing) to uncover patterns in performance and attrition.\n\nFurthermore, they analyzed performance across product categories, including keyword rankings, CTR, and landing-page behavior. An interactive performance dashboard was built to visualize organic traffic growth, engagement metrics, conversion patterns, and their correlation with product sales. Data-driven insights were delivered that refined SEO strategies and contributed to measurable improvements in sales growth and online visibility.\n\nNow, the question is about the total experience. From the context provided, it seems that Ahmedabad, Gujarat, as a location for data analysis roles (SEO & Sales Analytics) has achieved several key results: 22% increase in organic traffic, improved product-level visibility, and measurable improvements in sales growth through enhanced SEO strategies.\n\nSo, putting this together, the total experience would refer to these achievements. The answer should mention that Ahmedabad, Gujarat is known for high performance in SEO & Sales Analytics with a significant improvement in organic traffic (22% increase) and positive impacts on both product-level visibility and sales growth.\n...done thinking.\n\nAhmedabad, Gujarat is recognized for its excellence in Data Analysis roles, particularly in SEO & Sales Analytics. The area has demonstrated a 22% increase in organic traffic and improved product-level visibility, contributing positively to sales growth through enhanced SEO strategies.\n\nAnswer: Ahmedabad, Gujarat is known for high performance in SEO & Sales Analytics with notable improvements in organic traffic (a 22% increase) and positive impacts on product visibility and sales growth.",
+    "confidence": 0.3926,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5206
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T12:37:15.029768",
+    "question": "name the prime minister of india?",
+    "answer": "Thinking...\nOkay, so I need to figure out how to answer the question about the Prime Minister of India using only the provided PDF content. Let me start by reading through the document carefully.\n\nLooking at Page 1, it introduces Nevin Thekkep Arambil, his contact information, educational background from St. Xavier's College Autonomous in Ahmedabad, Gujarat. His degree is a B.Sc. in Computer Science obtained from August 2022 to May 2025. The skills mentioned include Excel, SQL, Power BI, and various data-related techniques like pivot tables, procedures, etc.\n\nThe professional summary mentions that Nevin built data-driven decisions that improved reorder planning and operational efficiency by enabling dynamic Excel dashboards to track weekly stock movements, sales performance, and demand forecasting, which reduced stock-outs by 18% and improved inventory planning cycles. He also worked at Digital Science Web Technologies Pvt. Ltd. and Drugmen Pharmacy.\n\nNow, the question is asking for the name of the Prime Minister of India. However, in the provided PDF, there's no mention or reference to the Indian government, Prime Minister, or any political information. The focus here is on Nevin's professional achievements and the companies he's associated with, not on current or past Indian Prime Ministers.\n\nSince the PDF doesn't provide any details about the Indian Prime Minister, it's not possible to extract that information from this document. Therefore, according to the rules set, if the question can't be answered using the provided content, I should respond that the question is irrelevant.\n...done thinking.\n\nthe question is irrelavant",
+    "confidence": 0.3602,
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6156
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T13:03:18.351079",
+    "question": "what is the name mentioned?",
+    "answer": "Thinking...\nOkay, so I need to figure out what the user is asking for. They provided a PDF document with some content on Nevin Thekkileparam, his contact details, education, skills, and job experience as a Data Analyst. Then they asked, \"what is the name mentioned?\" \n\nLooking at the document, it starts with Nevin's name: \"NEVIN THEKKEP ARAMBIL\". I don't see any other names mentioned besides that. So the answer should be just his name as given.\n...done thinking.\n\nThe name mentioned in the PDF is NEVIN THEKKEP ARAMBIL.\n\nAnswer:\nNEVIN THEKKEP ARAMBIL",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.75
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T13:12:58.349899",
+    "question": "what's the name mentioned?",
+    "answer": "Thinking...\nAlright, so I need to figure out what information is being asked here. The user is asking \"what's the name mentioned?\" Looking at the provided PDF content on Page 1, it seems like there are multiple sections.\n\nFirst, I see a block with the name NEVIN THEKKEP ARAMBIL along with his contact details and other information. Since the question is about identifying the name mentioned in the document, I should look through each section to spot any names that aren't part of standard company or place mentions.\n\nThe first paragraph starts with \"NEVIN THEKKEP ARAMBIL,\" so that's clearly a person's name. The rest of the content talks about his educational background, technical skills, and job role at Xavier's College. There are other sections mentioning things like pharmacy inventory analysis and performance dashboards, but those don't include any additional names beyond what's already mentioned.\n\nSo, putting it all together, the only name explicitly stated in the document is NEVIN THEKKEP ARAMBIL.\n...done thinking.\n\nN EVIN  T H E K K E P   A R A M B I L",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.7656
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T23:28:53.558203",
+    "question": "summarize this pdf",
+    "answer": "Thinking...\nOkay, so I need to summarize the provided PDF based on its content. Let me look through each page carefully.\n\nOn Page 1, there's a header with some initials followed by an email address, which doesn't seem relevant for summarizing. Then, there's a Professional Summary section that mentions the person is a Data Analyst/Scientist with hands-on experience in data analysis, preprocessing, exploratory data analysis (EDA), NLP, and ML libraries like Scikit-learn, XGBoost, LightGBM, NLTK, SpaCy. They also have deployment tools such as Streamlit and Flask.\n\nNext, there are some soft skills listed: analytical thinking, problem-solving, adaptability, time management, strong communication, and attention to detail.\n\nMoving on to Page 2, it talks about enabling real-time image inference and confidence visualization through a scalable Streamlit application. They've demonstrated real-world applications in healthcare imaging, manufacturing quality inspection, and smart surveillance. Additionally, they analyzed credit card transaction datasets to uncover spending trends, anomalies, and fraud indicators using SQL, Power BI, Excel, data analysis, and data visualization.\n\nSo putting it all together, the person has a strong background in data science with specific tools and experience across various applications, including NLP, ML, deployment, and real-time image processing. They also have solid soft skills and practical experience in analyzing financial data like credit card transactions.\n...done thinking.\n\nThe PDF outlines the professional expertise of an individual as a Data Analyst/Scientist with hands-on experience in data analysis, preprocessing, exploratory data analysis (EDA), NLP using libraries such as Scikit-learn, XGBoost, LightGBM, NLTK, and SpaCy. They also possess deployment skills in Streamlit and Flask. The individual has strong soft skills including analytical thinking, problem-solving, adaptability, time management, communication, and attention to detail. Their work includes real-time image inference visualization with tools like Streamlit, and they've applied their skills in healthcare imaging, manufacturing quality control, smart surveillance, and credit card fraud detection using SQL, Power BI, Excel, and data visualization techniques.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.4498
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T23:33:22.227159",
+    "question": "who's resume is it?",
+    "answer": "Thinking...\nOkay, so I need to figure out who the resume belongs to based on the provided PDF content. Let me read through the document carefully.\n\nLooking at Page 1, there's a section titled \"Experience\" with a job title: Workforce Management Analyst (Data Analyst) at E-Techno Global Services in Gandhinagar, Gujarat, from August 2025 to present. That seems like recent experience. \n\nThen, on the same page, under the \"Skills\" section, it lists programming languages like Python and SQL, data visualization tools such as Power BI and Tableau, and other relevant skills. It also mentions Machine Learning techniques and deployment tools like Streamlit and Flask.\n\nNow, the question is asking who's resume this information belongs to. Since all these details are part of a professional summary, it's likely that this is someone's resume. The structure includes job history, skills, and technical expertise typical for a resume in the tech or data science field.\n\nI don't see any external links or references here; everything points to a single individual's professional profile. Therefore, this information must belong to one person's resume.\n...done thinking.\n\nThe resume belongs to an individual with experience as a Workforce Management Analyst (Data Analyst) at E-Techno Global Services in Gandhinagar, Gujarat, and skills including Python, SQL, Power BI, Machine Learning, NLP libraries, and deployment tools like Streamlit.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5187
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T23:54:27.814895",
+    "question": "summarize the pdf",
+    "answer": "",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5463
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T23:54:52.999966",
+    "question": "what is the name mentioned in the pdf?",
+    "answer": "",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.7348
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T23:57:40.777124",
+    "question": "summarize the pdf",
+    "answer": "Thinking...\nOkay, I need to summarize the PDF content based on the user's query. Let me look through the provided document context.\n\nFirst, I'll go through each page in order. On Page 3, there are questions numbered 17 and 18. \n\nFor question 17, it's about a grade system with specific cutoff points for grades. The instructions say to use sum shortcuts to save time. So the answer should outline how to categorize grades into Excellent, Good, or Failed based on the given criteria.\n\nQuestion 18 is about summarizing the PDF itself. I need to provide an overview of what the document contains, mentioning both questions and any supporting information like tables.\n\nI have to make sure not to add any external knowledge or assumptions. Also, keep it concise and clear.\n\nAlright, let me put this together in a simple, factual manner as per the user's instructions.\n...done thinking.\n\nthe pdf includes two main sections:  \n17) a grade system for grades higher or equal to 80 as excellent, higher or equal to 60 but lower than 80 as good, and below 60 as failed.  \n18) it is summarizing the information contained within the pdf, mentioning that both questions are provided with data tables and details about the grade system.",
+    "sources": [
+      {
+        "page": 3,
+        "distance": 1.4617
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-25T23:59:37.844218",
+    "question": "what is this pdf all about?",
+    "answer": "Thinking...\nAlright, let's figure out how to answer these questions based on the PDF content provided.\n\n1. The user asked, \"how will you randomize the items of a list in place?\" In the PDF, I found a section discussing file functions and randomization methods. There was an example where they used `random.shuffle()` to shuffle a list. So, that's how they'd randomize it.\n\n2. Next question is about Python keywords. The PDF mentioned several key terms: input(), output(), del(), help(), print(). I should list these clearly.\n\n3. For the File function in Python, I know there are `open()`, `read()` (or `with` statement), and `close()` functions that read from a file. So, using these with a name or object makes sense for reading content.\n\n4. The user asked about keywords to create and write files. From the PDF, open(), file(), flush(), close(), and maybe other methods like seek()? I'll list those keywords.\n\n5. Now, the program asks to read all lines of an input file. Using a loop with `open()` in a with statement is efficient. I can collect each line into a list or print them one by one.\n\n6. Writing a Python program to append text to a file and display it involves opening the file, appending new data, then using `print()` to show the latest content.\n\n7. Finally, reading the last n lines of a file can be done similarly. Open the file in read mode, specify the line count, iterate through each line, collect up to that number, then print them all at once or sequentially.\n\nI need to make sure each answer is clear and uses only the PDF's information without any assumptions or external knowledge.\n...done thinking.\n\n**Answer:**\n\n1. To randomize a list in place, use `random.shuffle()`.\n2. **Python Keywords**: input(), output(), del(), help(), print().\n3. **File Function**: Use open() with mode 'r' and read all lines via the data attribute.\n4. **Keywords for Files**: open(), file(), flush(), close(), seek().\n5. Read all lines:  \n   ```python\n   with open('input.txt', 'r') as f:\n       content = [line.strip() for line in f.readlines()]\n   print(content)\n   ```\n\n6. Read last n lines:  \n   ```python\n   with open('file.txt', 'r') as f:\n       while len(lines) < n:\n           next_line = f.readline()\n           lines.append(next_line.strip())\n   print('\\n'.join(lines))\n   ```\n\n7. Append text and display:  \n   ```python\n   file_name = input('Enter file name:')\n   with open(file_name, 'a') as f:\n       f.write(new_text)\n   print(f\"The text in the file is now:\\n{f.read()}\")",
+    "sources": [
+      {
+        "page": 21,
+        "distance": 1.371
+      },
+      {
+        "page": 16,
+        "distance": 1.3916
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:01:36.682636",
+    "question": "what is the pdf all about?",
+    "answer": "Thinking...\nOkay, let me try to figure this out. The user wants an answer in short and simple format based on the provided PDF content. They also gave some specific rules about how I should respond.\n\nFirst, I need to understand what the PDF says. From the context given, the first page is about randomizing a list of items in place. Then there's some questions about Python functions, keywords, reading files, and reading lines from files. On another page (Page 16), it lists various module assignments related to Data Analysis.\n\nThe user's main query was \"what is the pdf all about?\" I need to extract that information from the PDF content provided. The relevant part on Page 21 mentions how to randomize a list of items in place, which seems to be the central topic of the PDF.\n\nI should make sure not to add any assumptions or external knowledge. Just use what's explicitly in the PDF text. Since the user wants a short and simple response, I'll focus only on that information without going into other topics unless they ask for more.\n\nAlso, I need to adhere to the rules: clear answer if it exists, explain facts; don't include anything beyond the PDF content; no markdown or extra commentary. Just a plain text response as specified.\n...done thinking.\n\nthe pdf explains how to randomize items in a list and provides information on Python modules, functions, keywords for writing files, reading text files, and lines from files. it covers topics like data analysis and introduction to python.",
+    "sources": [
+      {
+        "page": 21,
+        "distance": 1.3926
+      },
+      {
+        "page": 16,
+        "distance": 1.4028
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:02:38.494544",
+    "question": "who's resume is this?",
+    "answer": "Thinking...\nAlright, I need to figure out who the resume is in the given context. Looking at the pages provided, especially page 6 and 7, it seems that each of these are separate resumes from different individuals.\n\nFirst, on page 6, there are several resumes listed: Ishaan, Jiya, Kabir, Kriti, Mohan, and Neha. Each has their name, age, salary, and experience details. So this must be the resume for Ishaan.\n\nThen, on page 7, each of the subsequent pages lists different individuals with similar information, like Franklin Wright, Denzel Flores, etc. This seems to be a continuation of the resumes from page 6 but not as separate; perhaps another user shared another resume or added more details.\n\nThe question is asking who's the resume in this context. Since Ishaan's resume is clearly mentioned on page 6, that must be the answer.\n...done thinking.\n\nIshaan Saxena",
+    "sources": [
+      {
+        "page": 7,
+        "distance": 1.4093
+      },
+      {
+        "page": 6,
+        "distance": 1.4189
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:04:56.981219",
+    "question": "what is this pdf?",
+    "answer": "Thinking...\nOkay, so I need to figure out what the user PDF is about. Let me start by reading through the document context they provided.\n\nOn Page 1, it says \"Reducing manual reporting effort by 30% and enabling fast data-driven decisions.\" That's pretty clear—this section mentions techniques or methods to make data reporting less tedious and quicker for decision-making. So the focus here is on optimizing data handling processes.\n\nThen there are bullet points listing various tools and methodologies used in conducting a competitive analysis, collaborating with content teams, designing user experiences, implementing data optimizations, contributing to product sales through improved quality, and aligning user intuitions. This seems like it's about data-driven strategies for businesses.\n\nNext, the document continues with details about Digital Science Web Technologies, specifically Digits 1024-2025. That looks like a tech company or project name they're using. The section doesn't provide more specifics, just a timeframe and description of the project.\n\nThe following sections list various programming languages, libraries, data visualization tools, statistical methods, auditing/quality assurance, product management, reporting creation, scheduling, Git & GitHub collaboration, and experience. These are all components used in data analysis and related tasks.\n\nPutting this together, the PDF seems to outline strategies or methodologies for optimizing data reporting processes using a combination of tools like Python, Pandas, Matplotlib, Seaborn, statistical software, EDA, cleaning, modeling, quality control, auditing, product management, reporting creation, project management with Git & GitHub, and specific tech project names.\n\nSo the user is likely referring to a guide or resource for optimizing data reporting in a business setting using these tools. They might be looking to improve their efficiency and decision-making through better data handling techniques.\n...done thinking.\n\nThe PDF outlines strategies for optimizing data reporting processes in a business context, emphasizing techniques like reducing manual effort, implementing advanced technologies, and leveraging specific programming languages and methodologies for effective data analysis and collaboration.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.652
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:06:05.935936",
+    "question": "who is nevin?",
+    "answer": "Thinking...\nAlright, I need to figure out who \"nevin\" refers to in the given PDF context. Let me read through the document content carefully.\n\nLooking at Page 1, there's a section titled \"P R O F E S S I S I A L  S U M M A R Y\". This summary mentions that Nevin is a detail-oriented Data Analyst with extensive experience in data cleaning and analysis. The user asks, \"who is nevin?\"\n\nNow, I should check if there's any mention of Nevin specifically in the PDF text. Scanning through, I don't see any name listed except Nevin as part of his role or background.\n\nThe task is to answer based on the provided PDF content, so I can only use the information given. Since Nevin isn't mentioned anywhere else besides being a Data Analyst with experience, and there's no other context about him in the document, it seems like he might not be directly referenced in the PDF text.\n\nAccording to rule 6, if the answer is irrelevant, respond with \"the question is irrelavant\". That applies here because Nevin isn't present anywhere else in the document. There's nothing about Nevin's background or any specific information related to him that can be extracted from the provided content.\n...done thinking.\n\nthe question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.798
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:09:28.770950",
+    "question": "summarize the pdf",
+    "answer": "Thinking...\nOkay, I need to summarize the PDF text provided. Let me read through it carefully.\n\nThe document starts with an introductory sentence mentioning various tools and libraries used in data science, like Python, Pandas, NumPy, Matplotlib, Seaborn, and others. It also includes topics such as reporting effort reduction, competitive analysis, collaboration with content teams, optimization of digitization, contributing to product sales improvements through quality and user experience, and the company's web tech services.\n\nI should make sure not to add any assumptions or external knowledge beyond what's in the PDF. Also, I need to keep it concise and clear without using markdown or extra commentary. Just a straightforward summary.\n...done thinking.\n\nThe document discusses various tools used in data science and includes content on report generation reduction, competitive analysis, collaboration with teams, optimization of digitization efforts, contributing to sales improvements through quality and user experience, and the company's web technologies.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5463
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:46:08.476283",
+    "question": "summarize the pdf",
+    "answer": "",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:46:53.537993",
+    "question": "what is the  role mentioned in the pdf?",
+    "answer": "",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6139
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:47:36.595869",
+    "question": "what is the name in the pdf?",
+    "answer": "",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6857
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:49:24.294602",
+    "question": "what is the name in the pdf?",
+    "answer": "",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6857
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T00:56:53.361540",
+    "question": "summarize the pdf?",
+    "answer": "",
+    "sources": [
+      {
+        "page": 3,
+        "distance": 1.431
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:12:26.736042",
+    "question": "what is the current role of nevin?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6914
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:13:13.125884",
+    "question": "summarize the pdf",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5463
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:14:08.626745",
+    "question": "did he work as an seo analyst?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3385
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:14:46.504820",
+    "question": "who is nevin?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.798
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:22:39.512889",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2421
+      },
+      {
+        "page": 2,
+        "distance": 1.6142
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:23:49.691988",
+    "question": "summarize the pdf",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:24:44.455732",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2421
+      },
+      {
+        "page": 2,
+        "distance": 1.6142
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:27:36.293251",
+    "question": "summarize the pdf",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5463
+      }
+    ]
+  },
+  {
+    "timestamp": "2025-12-26T01:37:02.464802",
+    "question": "what is the job role in the pdf>",
+    "answer": "QC Executive",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3242
+      }
+    ],
+    "confidence": 0.4122
+  },
+  {
+    "timestamp": "2025-12-26T01:37:33.400301",
+    "question": "what's the salary mentioned in the pdf?",
+    "answer": "the question is irrelevant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5983
+      },
+      {
+        "page": 2,
+        "distance": 1.7754
+      }
+    ],
+    "confidence": 0.3722
+  },
+  {
+    "timestamp": "2025-12-26T01:38:10.210149",
+    "question": "what are the requirements for the role/",
+    "answer": "Bachelor’s degree  \n0-1 years of experience in a QC or data management role, preferably in a pharma or healthcare setting  \nWorking knowledge of Microsoft Excel (data sorting, lookup functions, basic formulas)",
+    "sources": [
+      {
+        "page": 2,
+        "distance": 1.3149
+      },
+      {
+        "page": 1,
+        "distance": 1.3656
+      }
+    ],
+    "confidence": 0.4273
+  },
+  {
+    "timestamp": "2025-12-26T01:38:53.009288",
+    "question": "what  is the job role in the pdf?",
+    "answer": "QC Executive",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3312
+      }
+    ],
+    "confidence": 0.4088
+  },
+  {
+    "timestamp": "2025-12-26T01:39:18.290492",
+    "question": "what is the name of  the company?",
+    "answer": "irrelevant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3927
+      }
+    ],
+    "confidence": 0.4088
+  },
+  {
+    "timestamp": "2025-12-26T01:39:21.291805",
+    "question": "where is the location of the company?",
+    "answer": "Ahmedabad",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3415
+      }
+    ],
+    "confidence": 0.4021
+  },
+  {
+    "timestamp": "2025-12-26T01:39:46.043674",
+    "question": "summarize the pdf.",
+    "answer": "The PDF outlines requirements for a role involving pharmaceutical product knowledge, attention to detail, accuracy in repetitive tasks, strong communication skills, and proficiency with Microsoft Excel including features such as filters, VLOOKUP, and data validation.",
+    "sources": [
+      {
+        "page": 2,
+        "distance": 1.6202
+      },
+      {
+        "page": 1,
+        "distance": 1.6527
+      }
+    ],
+    "confidence": 0.3793
+  },
+  {
+    "timestamp": "2025-12-26T01:40:34.068699",
+    "question": "summarize the pdf",
+    "answer": "The PDF covers Excel-based reporting and tracking using Microsoft Excel, including maintenance of tracking sheets, QC logs, and reports. It emphasizes the use of basic functions such as filters, vlookup, and data validation for quality checks. Additionally, it mentions a need for a basic understanding of pharmaceutical products and terminology, high attention to detail, and strong communication skills.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      }
+    ],
+    "confidence": 0.3692
+  },
+  {
+    "timestamp": "2025-12-26T01:41:52.540200",
+    "question": "calculate the total experience of nevin.",
+    "answer": "the question is irrelative",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3329
+      }
+    ],
+    "confidence": 0.4172
+  },
+  {
+    "timestamp": "2025-12-26T01:42:28.200979",
+    "question": "why is the question irrelevant?",
+    "answer": "the question is irrelative",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6352
+      }
+    ],
+    "confidence": 0.3787
+  },
+  {
+    "timestamp": "2025-12-26T01:43:04.199009",
+    "question": "what is the name mentioned in the pdf?",
+    "answer": "Nevin Thekkep Arambil",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.7348
+      }
+    ],
+    "confidence": 0.3653
+  },
+  {
+    "timestamp": "2025-12-26T01:43:38.581138",
+    "question": "who is nevin?",
+    "answer": "the question is irrelative",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.798
+      }
+    ],
+    "confidence": 0.3533
+  },
+  {
+    "timestamp": "2025-12-26T01:44:12.939286",
+    "question": "summarize the pdf",
+    "answer": "Summarize the PDF",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.5463
+      }
+    ],
+    "confidence": 0.3906
+  },
+  {
+    "timestamp": "2025-12-26T02:14:18.362349",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2421
+      },
+      {
+        "page": 2,
+        "distance": 1.6142
+      }
+    ],
+    "confidence": 0.4118
+  },
+  {
+    "timestamp": "2025-12-26T02:14:45.086186",
+    "question": "what is the pdf all about?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6565
+      }
+    ],
+    "confidence": 0.3733
+  },
+  {
+    "timestamp": "2025-12-26T02:15:02.403598",
+    "question": "summarize the pdf",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      }
+    ],
+    "confidence": 0.3692
+  },
+  {
+    "timestamp": "2025-12-26T02:24:20.583784",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2421
+      },
+      {
+        "page": 2,
+        "distance": 1.6142
+      }
+    ],
+    "confidence": 0.4118
+  },
+  {
+    "timestamp": "2025-12-26T02:28:03.420365",
+    "question": "summarize the pdf",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      }
+    ],
+    "confidence": 0.3692
+  },
+  {
+    "timestamp": "2025-12-26T02:29:28.746599",
+    "question": "where is the company located?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3331
+      }
+    ],
+    "confidence": 0.4057
+  },
+  {
+    "timestamp": "2025-12-26T02:30:45.245345",
+    "question": "who is nevin?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.8592
+      },
+      {
+        "page": 2,
+        "distance": 2.0005
+      }
+    ],
+    "confidence": 0.3413
+  },
+  {
+    "timestamp": "2025-12-26T02:31:29.021372",
+    "question": "who is nevin",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.7826
+      }
+    ],
+    "confidence": 0.3566
+  },
+  {
+    "timestamp": "2025-12-26T02:32:47.779065",
+    "question": "what is the name mentioned in the pdf.",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.7011
+      }
+    ],
+    "confidence": 0.3701
+  },
+  {
+    "timestamp": "2025-12-26T02:33:50.739818",
+    "question": "summarize the pdf/ document",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.529
+      }
+    ],
+    "confidence": 0.3897
+  },
+  {
+    "timestamp": "2025-12-26T02:36:03.366258",
+    "question": "exit",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.7456
+      }
+    ],
+    "confidence": 0.3626
+  },
+  {
+    "timestamp": "2025-12-26T12:26:39.092050",
+    "question": "what is this pdf all about?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6001
+      }
+    ],
+    "confidence": 0.3841
+  },
+  {
+    "timestamp": "2025-12-26T12:26:46.871942",
+    "question": "who is arushi?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.0945
+      }
+    ],
+    "confidence": 0.4287
+  },
+  {
+    "timestamp": "2025-12-26T12:26:58.938812",
+    "question": "summarize the pdf",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6313
+      }
+    ],
+    "confidence": 0.3782
+  },
+  {
+    "timestamp": "2025-12-26T12:29:48.159845",
+    "question": "summarize the pdf",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6313
+      }
+    ],
+    "confidence": 0.3782
+  },
+  {
+    "timestamp": "2025-12-26T12:51:32.238177",
+    "question": "give me the contact number",
+    "answer": "(412) 579-1312",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.1087
+      },
+      {
+        "page": 1,
+        "distance": 1.5835
+      },
+      {
+        "page": 1,
+        "distance": 1.5992
+      }
+    ],
+    "confidence": 0.411
+  },
+  {
+    "timestamp": "2025-12-26T13:05:29.083546",
+    "question": "give me the email",
+    "answer": "arushijain273@gmail.com",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.1887
+      },
+      {
+        "page": 1,
+        "distance": 1.6052
+      },
+      {
+        "page": 1,
+        "distance": 1.6186
+      }
+    ],
+    "confidence": 0.405
+  },
+  {
+    "timestamp": "2025-12-26T13:05:35.517129",
+    "question": "give me the contact number",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.1087
+      },
+      {
+        "page": 1,
+        "distance": 1.5835
+      },
+      {
+        "page": 1,
+        "distance": 1.5992
+      }
+    ],
+    "confidence": 0.411
+  },
+  {
+    "timestamp": "2025-12-26T13:09:55.806294",
+    "question": "give me the email",
+    "answer": "arushijain273@gmail.com",
+    "sources": [],
+    "confidence": 1.0
+  },
+  {
+    "timestamp": "2025-12-26T13:12:03.137486",
+    "question": "summarize the pdf",
+    "answer": "The PDF is about Natural Language Programming and focuses on Python Essentials, Agile Development, and Data Visualization. It also mentions an AI-Powered Learning Transformation Tool that improved learning outcomes by 15% through a GPT plugin integrated into their ed-tech platform. Additionally, there's a mention of a Mathematics Solution Automation Plugin and a Market Basket Analysis using apriori for customer purchasing pattern analysis. The document also includes work experience details but no specific information about it is provided in the context given.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6313
+      },
+      {
+        "page": 1,
+        "distance": 1.6574
+      },
+      {
+        "page": 1,
+        "distance": 1.7093
+      }
+    ],
+    "confidence": 0.375
+  },
+  {
+    "timestamp": "2025-12-26T13:12:34.470172",
+    "question": "summarize the pdf",
+    "answer": "The PDF discusses a person's work experience, specifically focusing on their role in Natural Language Programming and AI-Powered Learning. They pioneered the development and integration of a GPT plugin into an ed-tech platform to enhance student learning outcomes and engagement by 15%. They also orchestrated the ideation and realization of a mathematical solutions automation plugin for the same platform. Additionally, they analyzed customer's purchasing patterns using apriori in Market Basket Analysis.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6313
+      },
+      {
+        "page": 1,
+        "distance": 1.6574
+      },
+      {
+        "page": 1,
+        "distance": 1.7093
+      }
+    ],
+    "confidence": 0.375
+  },
+  {
+    "timestamp": "2025-12-26T13:14:45.555889",
+    "question": "what is the experience mentioned in the pdf",
+    "answer": "The work experience mentioned in the PDF includes: 1. A 35% increase in overall user engagement 2. Owning the product roadmap and delivering a demo to 200 stakeholders across the educational industry 3. Engineering a comprehensive Proof of Concept using AutoGPT and LangChain to reduce development time by 30% 4. Being an AI Product Manager at 47Billion in Santa Clara, CA from October 2022 to June 2023 5. Leading the development of PRDs, market research, go-to-market strategy, user personas, aligning cross-functional teams, and driving successful product launches 6. Conducting design sprints and communicating with user focus groups, translating feedback into actionable product enhancements that contributed to a 35% increase in overall user engagement 7. Owning the product at 47Billion",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 0.8497
+      },
+      {
+        "page": 1,
+        "distance": 1.4849
+      },
+      {
+        "page": 1,
+        "distance": 1.4941
+      }
+    ],
+    "confidence": 0.439
+  },
+  {
+    "timestamp": "2025-12-26T13:14:56.826212",
+    "question": "give me email id mentioned in the resume",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6166
+      },
+      {
+        "page": 1,
+        "distance": 1.6396
+      },
+      {
+        "page": 1,
+        "distance": 1.7006
+      }
+    ],
+    "confidence": 0.377
+  },
+  {
+    "timestamp": "2025-12-26T13:18:26.309656",
+    "question": "summarize the pdf",
+    "answer": "The PDF discusses Natural Language Programming, Python Essentials, Agile Development, and Data Visualization. The author has pioneered the development and integration of a GPT plugin into 47Billion's core ed-tech platform to improve learning outcomes and engagement levels by 15%. They have also orchestrated the ideation and realization of an advanced mathematical solutions automation plugin for 47Billion's ed-tech product. Additionally, they have worked on Market Basket Analysis using apriori for analyzing customer purchasing patterns.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6313
+      },
+      {
+        "page": 1,
+        "distance": 1.6574
+      },
+      {
+        "page": 1,
+        "distance": 1.7093
+      }
+    ],
+    "confidence": 0.375
+  },
+  {
+    "timestamp": "2025-12-26T13:20:43.960224",
+    "question": "what is the name mentioned in the resume?",
+    "answer": "Arushi Jain",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.1474
+      },
+      {
+        "page": 1,
+        "distance": 1.4176
+      },
+      {
+        "page": 1,
+        "distance": 1.5157
+      }
+    ],
+    "confidence": 0.424
+  },
+  {
+    "timestamp": "2025-12-26T13:23:35.921766",
+    "question": "tell me about arushi's education.",
+    "answer": "The text provided does not mention Arushi's education.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 0.8567
+      },
+      {
+        "page": 1,
+        "distance": 1.3059
+      },
+      {
+        "page": 1,
+        "distance": 1.446
+      }
+    ],
+    "confidence": 0.454
+  },
+  {
+    "timestamp": "2025-12-26T13:25:25.718248",
+    "question": "what are the names of the educational institution mentioned in the PDF?",
+    "answer": "Carnegie Mellon University, Heinz College\\ Medi-Caps University",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.382
+      },
+      {
+        "page": 1,
+        "distance": 1.4209
+      },
+      {
+        "page": 1,
+        "distance": 1.5956
+      }
+    ],
+    "confidence": 0.405
+  },
+  {
+    "timestamp": "2025-12-26T13:27:37.100977",
+    "question": "did arushi work?",
+    "answer": "Yes",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3123
+      },
+      {
+        "page": 1,
+        "distance": 1.6093
+      },
+      {
+        "page": 1,
+        "distance": 1.6368
+      }
+    ],
+    "confidence": 0.397
+  },
+  {
+    "timestamp": "2025-12-26T13:28:54.787014",
+    "question": "what are the roles in which arushi work?",
+    "answer": "President, Secretary General",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.1203
+      },
+      {
+        "page": 1,
+        "distance": 1.416
+      },
+      {
+        "page": 1,
+        "distance": 1.522
+      }
+    ],
+    "confidence": 0.425
+  },
+  {
+    "timestamp": "2025-12-26T13:30:03.864400",
+    "question": "tell me about the work that she did as the president? and where was she the president?",
+    "answer": "The question is irrelevant. There's no information in the provided context regarding any position as a president or the location of such position.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.4386
+      },
+      {
+        "page": 1,
+        "distance": 1.4686
+      },
+      {
+        "page": 1,
+        "distance": 1.7037
+      }
+    ],
+    "confidence": 0.394
+  },
+  {
+    "timestamp": "2025-12-26T13:32:15.491826",
+    "question": "summarize the pdf",
+    "answer": "The PDF discusses a role that involves managing and tracking data related to pharmaceutical products using Microsoft Excel. Tasks include conducting audits, onboarding new products by entering, verifying, and standardizing product data, ensuring proper formatting, and generating reports with basic Excel functions like filters, VLOOKUP, and data validation. The ideal candidate should have a basic understanding of pharmaceutical terminology, high attention to detail, strong communication and coordination skills, and the ability to manage repetitive tasks accurately.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      },
+      {
+        "page": 1,
+        "distance": 1.8571
+      }
+    ],
+    "confidence": 0.363
+  },
+  {
+    "timestamp": "2025-12-26T13:34:46.175245",
+    "question": "where is this company located?",
+    "answer": "Ahmedabad",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3793
+      },
+      {
+        "page": 1,
+        "distance": 1.6467
+      },
+      {
+        "page": 1,
+        "distance": 1.6571
+      }
+    ],
+    "confidence": 0.39
+  },
+  {
+    "timestamp": "2025-12-26T22:20:35.788300",
+    "question": "what is the pdf all about?",
+    "answer": "The PDF is about a job description for a QC Executive position in the Quality Control / Product Data Management department located in Ahmedabad. The role involves maintaining data hygiene, supporting the addition of new pharmaceutical products, and working closely with various teams. The main tools used are Microsoft Excel for reporting, tracking, and product onboarding purposes.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6565
+      },
+      {
+        "page": 1,
+        "distance": 1.7013
+      },
+      {
+        "page": 1,
+        "distance": 1.7396
+      }
+    ],
+    "confidence": 0.37
+  },
+  {
+    "timestamp": "2025-12-26T22:29:04.313817",
+    "question": "what are the requirements for the role?",
+    "answer": "Bachelor’s degree, 0-1 years of experience in a QC or data management role (preferably in a pharma or healthcare setting), working knowledge of Microsoft Excel (data sorting, lookup functions, basic formulas), basic understanding of pharmaceutical products and terminology, high attention to detail, ability to manage repetitive tasks with accuracy, strong communication and coordination skills.",
+    "sources": [
+      {
+        "page": 2,
+        "distance": 1.3249
+      },
+      {
+        "page": 1,
+        "distance": 1.3797
+      },
+      {
+        "page": 2,
+        "distance": 1.4683
+      }
+    ],
+    "confidence": 0.418
+  },
+  {
+    "timestamp": "2025-12-26T22:34:34.791069",
+    "question": "what is the name of the 6th prime minister of India?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6607
+      },
+      {
+        "page": 2,
+        "distance": 1.8335
+      },
+      {
+        "page": 2,
+        "distance": 1.9777
+      }
+    ],
+    "confidence": 0.354
+  },
+  {
+    "timestamp": "2025-12-26T22:59:08.298659",
+    "question": "summarize the pdf",
+    "answer": "The PDF discusses a job role involving data management using Microsoft Excel in a pharmaceutical setting. Duties include conducting routine audits, onboarding new products by entering, verifying, and standardizing product data, coordinating with different teams, and maintaining tracking sheets, QC logs, and reports using Excel functions like filters, vlookup, and data validation. The required skills are a basic understanding of pharmaceutical products and terminology, high attention to detail, ability to manage repetitive tasks accurately, strong communication, and coordination skills.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      },
+      {
+        "page": 1,
+        "distance": 1.8571
+      }
+    ],
+    "confidence": 0.363
+  },
+  {
+    "timestamp": "2025-12-26T23:23:15.372115",
+    "question": "who is the pm of India?",
+    "answer": "The question is irrelevant.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.4934
+      },
+      {
+        "page": 2,
+        "distance": 1.8791
+      },
+      {
+        "page": 2,
+        "distance": 1.9795
+      }
+    ],
+    "confidence": 0.359
+  },
+  {
+    "timestamp": "2025-12-26T23:25:52.610488",
+    "question": "summarize the pdf.",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 2,
+        "distance": 1.6202
+      },
+      {
+        "page": 1,
+        "distance": 1.6527
+      },
+      {
+        "page": 1,
+        "distance": 1.727
+      }
+    ],
+    "confidence": 0.375
+  },
+  {
+    "timestamp": "2025-12-26T23:25:52.612901",
+    "question": "what is the job role?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2191
+      },
+      {
+        "page": 2,
+        "distance": 1.5549
+      },
+      {
+        "page": 1,
+        "distance": 1.6453
+      }
+    ],
+    "confidence": 0.404
+  },
+  {
+    "timestamp": "2025-12-26T23:30:19.333116",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "QC Executive",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2421
+      },
+      {
+        "page": 2,
+        "distance": 1.6142
+      },
+      {
+        "page": 1,
+        "distance": 1.653
+      }
+    ],
+    "confidence": 0.4
+  },
+  {
+    "timestamp": "2025-12-26T23:31:59.015009",
+    "question": "where is the company located?",
+    "answer": "Ahmedabad",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3331
+      },
+      {
+        "page": 1,
+        "distance": 1.5962
+      },
+      {
+        "page": 1,
+        "distance": 1.6063
+      }
+    ],
+    "confidence": 0.398
+  },
+  {
+    "timestamp": "2025-12-26T23:41:30.261666",
+    "question": "what are the requirements?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 2,
+        "distance": 1.222
+      },
+      {
+        "page": 2,
+        "distance": 1.5853
+      },
+      {
+        "page": 1,
+        "distance": 1.6181
+      }
+    ],
+    "confidence": 0.404
+  },
+  {
+    "timestamp": "2025-12-26T23:46:18.941253",
+    "question": "what is the role mentioned in the pdf?",
+    "answer": "The role mentioned in the PDF is that of a QC Executive in the Quality Control / Product Data Management department.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.6139
+      },
+      {
+        "page": 1,
+        "distance": 1.6658
+      },
+      {
+        "page": 1,
+        "distance": 1.6758
+      }
+    ],
+    "confidence": 0.377
+  },
+  {
+    "timestamp": "2025-12-26T23:48:05.355283",
+    "question": "where is the company located?",
+    "answer": "Ahmedabad",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.3331
+      },
+      {
+        "page": 1,
+        "distance": 1.5962
+      },
+      {
+        "page": 1,
+        "distance": 1.6063
+      }
+    ],
+    "confidence": 0.398
+  },
+  {
+    "timestamp": "2025-12-28T15:30:34.571485",
+    "question": "summarize the pdf",
+    "answer": "The PDF outlines a job role that involves using Microsoft Excel for reporting, tracking, and quality checks in a pharmaceutical context. Tasks include conducting audits of product data, flagging discrepancies, onboarding new products by entering, verifying, and standardizing data, and coordinating with various teams. The job requires a basic understanding of pharmaceutical terminology, high attention to detail, and strong communication skills. Excel functions like filters, vlookup, and data validation are mentioned for quality checks.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.685
+      },
+      {
+        "page": 2,
+        "distance": 1.7319
+      },
+      {
+        "page": 1,
+        "distance": 1.8571
+      }
+    ],
+    "confidence": 0.363
+  },
+  {
+    "timestamp": "2025-12-28T15:31:48.025808",
+    "question": "what is job role mentioned in the pdf?",
+    "answer": "QC Executive",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2203
+      },
+      {
+        "page": 2,
+        "distance": 1.6436
+      },
+      {
+        "page": 1,
+        "distance": 1.6614
+      }
+    ],
+    "confidence": 0.399
+  },
+  {
+    "timestamp": "2025-12-28T20:33:20.860170",
+    "question": "What are cats?",
+    "answer": "LLM is unavailable.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 0.6511616110801697,
+        "score": 0.6056342354918319,
+        "text": "Cats are small domestic animals often kept as pets. They purr."
+      },
+      {
+        "page": 2,
+        "distance": 1.3947715759277344,
+        "score": 0.41757636095734935,
+        "text": "Dogs are loyal animals that enjoy walks and play."
+      },
+      {
+        "page": 3,
+        "distance": 1.7610061168670654,
+        "score": 0.36218681077559783,
+        "text": "Python is a popular programming language used for AI and web development."
+      }
+    ],
+    "confidence": 0.531
+  },
+  {
+    "timestamp": "2025-12-29T05:01:26.546240",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "LLM is unavailable.",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2420587539672852,
+        "score": 0.44601864167498595,
+        "text": "Job Title: QC Executive \nDepartment: Quality Control / Product Data Management \nLocation: Ahmedabad \nEmployment Type: Full-Time \n \nJob Summary: \nWe are looking for a detail-oriented QC Executive to ensure accuracy, consistency, and \ncompleteness of product data in our internal systems. The role involves maintaining data \nhygiene, supporting the addition of new pharmaceutical products, and working closely with"
+      },
+      {
+        "page": 1,
+        "distance": 1.6119719743728638,
+        "score": 0.3828524998780282,
+        "text": "rosoft Excel to maintain tracking sheets, QC logs, and reports. \no Apply basic functions like filters, vlookup, and data validation to support"
+      },
+      {
+        "page": 2,
+        "distance": 1.666433572769165,
+        "score": 0.37503278169479104,
+        "text": "formulas) \n Basic understanding of pharmaceutical products and terminology \n High attention to detail and ability to manage repetitive tasks with accuracy"
+      },
+      {
+        "page": 2,
+        "distance": 1.7158210277557373,
+        "score": 0.3682127760923798,
+        "text": " Pharma Product Familiarity: \no Understand basic pharmaceutical terminologies such as formulations, \nstrengths, therapeutic classes, etc. \no Verify data consistency in line with pharma standards and common industry \npractices. \n \nRequirements: \n Bachelor’s degree \n 0-1 years of experience in a QC or data management role, preferably in a pharma or \nhealthcare setting \n Working knowledge of Microsoft Excel (data sorting, lookup functions, basic \nformulas)"
+      }
+    ],
+    "confidence": 0.2
+  },
+  {
+    "timestamp": "2025-12-29T05:06:37.439381",
+    "question": "what is the job role mentioned in the pdf?",
+    "answer": "I could not find that information in the document.",
+    "sources": [
+      {
+        "page": 1,
+        "text": "Job Title: QC Executive Department: Quality Control / Product Data Management Location: Ahmedabad Employment Type: Full-Time Job Summary: We are looking for a detail-oriented QC Executive to ensure accuracy, consistency, and completeness of product data in our internal systems. The role involves maintaining data hygiene, supporting the addition of new pharmaceutical products, and working closely with cross-functional teams to uphold high-quality standards in product information. A basic understa",
+        "score": 0.37367677688598633
+      },
+      {
+        "page": 1,
+        "text": "orrection.  New Product Onboarding: o Support the addition of new products by entering, verifying, and standardizing data (such as salt name, brand name, dosage, packaging, etc.). o Coordinate with procurement, regulatory, and catalogue teams to ensure all product data fields are properly populated. o Ensure all newly added products meet formatting and naming conventions.  Excel-Based Reporting and Tracking: o Use Microsoft Excel to maintain tracking sheets, QC logs, and reports. o Apply basic",
+        "score": 0.23331218957901
+      },
+      {
+        "page": 1,
+        "text": "acking sheets, QC logs, and reports. o Apply basic functions like filters, vlookup, and data validation to support quality checks.",
+        "score": 0.20282062888145447
+      },
+      {
+        "page": 2,
+        "text": " Basic understanding of pharmaceutical products and terminology  High attention to detail and ability to manage repetitive tasks with accuracy  Strong communication and coordination skills",
+        "score": 0.1822807639837265
+      }
+    ],
+    "confidence": 0.2
+  },
+  {
+    "timestamp": "2025-12-29T07:42:36.495564",
+    "question": "SUMMARIZE THE PDF",
+    "answer": "Error running model: 'charmap' codec can't encode character '\\uf0b7' in position 334: character maps to <undefined>",
+    "sources": [
+      {
+        "text": "acking sheets, QC logs, and reports. o Apply basic functions like filters, vlookup, and data validation to support quality checks.",
+        "page": 1,
+        "score": 0.1763671636581421
+      },
+      {
+        "text": " Basic understanding of pharmaceutical products and terminology  High attention to detail and ability to manage repetitive tasks with accuracy  Strong communication and coordination skills",
+        "page": 2,
+        "score": 0.12043294310569763
+      },
+      {
+        "text": "orrection.  New Product Onboarding: o Support the addition of new products by entering, verifying, and standardizing data (such as salt name, brand name, dosage, packaging, etc.). o Coordinate with procurement, regulatory, and catalogue teams to ensure all product data fields are properly populated. o Ensure all newly added products meet formatting and naming conventions.  Excel-Based Reporting and Tracking: o Use Microsoft Excel to maintain tracking sheets, QC logs, and reports. o Apply basic",
+        "page": 1,
+        "score": 0.08242127299308777
+      }
+    ],
+    "confidence": 0.126
+  },
+  {
+    "timestamp": "2025-12-29T08:32:50.565367",
+    "question": "what is the job title?",
+    "answer": "the question is irrelavant",
+    "sources": [
+      {
+        "page": 1,
+        "distance": 1.2024271488189697
+      },
+      {
+        "page": 2,
+        "distance": 1.6079057455062866
+      },
+      {
+        "page": 1,
+        "distance": 1.6537623405456543
+      }
+    ],
+    "confidence": 0.402
+  }
+]
