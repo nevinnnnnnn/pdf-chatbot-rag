@@ -1,250 +1,383 @@
+"""
+CHAT PDF - Professional Document AI Assistant
+Clean & Minimal UI Version
+"""
+
 import streamlit as st
 import sqlite3
 import hashlib
 from datetime import datetime
-import json
-import warnings
-import re
+from typing import Optional, Dict
 
-# Suppress CryptographyDeprecationWarning about ARC4
-warnings.filterwarnings("ignore", message="ARC4 has been moved to")
+# ============================================================================
+# CONFIGURATION
+# ============================================================================
 
-# Page configuration
 st.set_page_config(
-    page_title="Chat PDF - Document AI Assistant",
+    page_title="Chat PDF | AI Assistant",
     page_icon="📚",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# Load your custom CSS
-def load_custom_css():
-    with open('style.css', 'r') as f:
-        css = f.read()
-    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+# ============================================================================
+# MINIMAL CSS
+# ============================================================================
 
-# Additional CSS for login page
-def load_login_css():
+def load_minimal_css():
+    """Load clean, light UI with proper contrast"""
     st.markdown("""
     <style>
-    /* Login page specific styling */
-    .login-page-container {
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        padding: 20px;
+    /* ========== GLOBAL STYLES ========== */
+    :root {
+        --primary-blue: #1e88e5;
+        --light-blue: #e3f2fd;
+        --medium-blue: #90caf9;
+        --dark-blue: #1565c0;
+        --text-dark: #1a237e;
+        --text-medium: #283593;
+        --text-light: #5c6bc0;
+        --bg-white: #ffffff;
+        --bg-light: #f8fafc;
+        --border-light: #bbdefb;
+        --success: #4caf50;
+        --warning: #ff9800;
+        --danger: #f44336;
     }
     
-    .login-card {
-        background: white;
-        border-radius: 20px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 440px;
-        padding: 40px;
-        border: 1px solid #e2e8f0;
+    .stApp {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        background-color: var(--bg-white);
+        color: var(--text-dark);
     }
     
-    .login-header {
-        text-align: center;
-        margin-bottom: 40px;
+    /* ========== HIDE DEFAULT ELEMENTS ========== */
+    #MainMenu, footer, header, .stDeployButton, [data-testid="stStatusWidget"] {
+        visibility: hidden;
+        display: none;
     }
     
-    .login-logo {
-        font-size: 64px;
-        margin-bottom: 16px;
-        color: #2563eb;
+    /* ========== TEXT ELEMENTS ========== */
+    h1, h2, h3, h4, h5, h6 {
+        color: var(--text-dark) !important;
+        font-weight: 600;
     }
     
-    .login-title {
-        font-size: 32px;
-        font-weight: 800;
-        color: #1e293b;
-        margin-bottom: 8px;
+    p, span, div, label {
+        color: var(--text-medium) !important;
     }
     
-    .login-subtitle {
+    .stMarkdown p, .stMarkdown span {
+        color: var(--text-medium) !important;
+    }
+    
+    /* ========== FORM ELEMENTS ========== */
+    .stTextInput > div > div {
+        background: var(--bg-white);
+        border: 2px solid var(--border-light);
+        border-radius: 8px;
+        transition: all 0.2s;
+    }
+    
+    .stTextInput > div > div:hover {
+        border-color: var(--medium-blue);
+        background: var(--light-blue);
+    }
+    
+    .stTextInput > div > div:focus-within {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(30, 136, 229, 0.1);
+    }
+    
+    .stTextInput input {
+        color: var(--text-dark) !important;
         font-size: 16px;
-        color: #64748b;
-        font-weight: 500;
     }
     
-    .login-input {
+    .stTextInput input::placeholder {
+        color: var(--text-light) !important;
+    }
+    
+    /* ========== BUTTONS ========== */
+    .stButton > button {
+        background-color: var(--primary-blue);
+        color: white !important;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 24px;
+        font-weight: 500;
+        font-size: 15px;
+        transition: all 0.2s;
+    }
+    
+    .stButton > button:hover {
+        background-color: var(--dark-blue);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(30, 136, 229, 0.2);
+    }
+    
+    .stButton > button[kind="secondary"] {
+        background-color: transparent;
+        border: 2px solid var(--primary-blue);
+        color: var(--primary-blue) !important;
+    }
+    
+    .stButton > button[kind="secondary"]:hover {
+        background-color: var(--light-blue);
+        border-color: var(--dark-blue);
+        color: var(--dark-blue) !important;
+    }
+    
+    /* ========== CARDS & CONTAINERS ========== */
+    .clean-card {
+        background: var(--bg-white);
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 16px;
+        transition: all 0.3s;
+    }
+    
+    .clean-card:hover {
+        border-color: var(--medium-blue);
+        box-shadow: 0 6px 20px rgba(144, 202, 249, 0.15);
+    }
+    
+    .metric-card {
+        background: linear-gradient(135deg, var(--light-blue), #f0f7ff);
+        border: 2px solid var(--border-light);
+        border-radius: 12px;
+        padding: 24px;
+        text-align: center;
+    }
+    
+    .metric-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 8px 0;
+    }
+    
+    .metric-label {
+        font-size: 14px;
+        color: var(--text-medium);
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* ========== SIDEBAR ========== */
+    [data-testid="stSidebar"] {
+        background-color: var(--bg-light);
+        border-right: 2px solid var(--border-light);
+    }
+    
+    .sidebar-header {
+        text-align: center;
+        padding: 32px 0 24px 0;
+        border-bottom: 2px solid var(--border-light);
         margin-bottom: 24px;
     }
     
-    .login-input label {
-        display: block;
-        color: #475569;
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 8px;
+    .sidebar-header h2 {
+        color: var(--text-dark) !important;
+        margin: 0;
     }
     
-    .login-button-container {
-        margin-top: 32px;
+    .sidebar-header p {
+        color: var(--text-light) !important;
+        margin: 4px 0 0 0;
     }
     
-    .login-button {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
-        color: white;
-        border: none;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
-    
-    .login-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
-    }
-    
-    .login-button:active {
-        transform: translateY(0);
-    }
-    
-    .login-footer {
-        text-align: center;
-        margin-top: 32px;
-        padding-top: 24px;
-        border-top: 1px solid #e2e8f0;
-        color: #64748b;
-        font-size: 14px;
-    }
-    
-    .demo-credentials {
-        background: #eff6ff;
-        border: 1px solid #dbeafe;
+    /* ========== USER INFO CARD ========== */
+    .user-info-card {
+        background: white;
+        border: 2px solid var(--border-light);
         border-radius: 12px;
         padding: 20px;
-        margin-top: 24px;
+        margin-bottom: 24px;
     }
     
-    .demo-credentials h4 {
-        color: #1e40af;
-        margin-bottom: 12px;
-        font-size: 16px;
+    .username {
+        font-size: 18px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 4px;
     }
     
-    .demo-credentials code {
-        background: #dbeafe;
-        padding: 4px 8px;
-        border-radius: 6px;
-        font-family: 'Courier New', monospace;
-        color: #1e40af;
-    }
-    
-    .feature-showcase {
-        max-width: 1000px;
-        margin: 60px auto;
-    }
-    
-    .feature-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 24px;
-        margin-top: 40px;
-    }
-    
-    .feature-item {
-        background: white;
-        border-radius: 16px;
-        padding: 32px;
-        border: 1px solid #e2e8f0;
-        transition: all 0.3s ease;
-    }
-    
-    .feature-item:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
-        border-color: #93c5fd;
-    }
-    
-    .feature-icon {
-        font-size: 40px;
-        margin-bottom: 20px;
-        color: #2563eb;
-    }
-    
-    .feature-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 12px;
-    }
-    
-    .feature-desc {
-        color: #64748b;
-        line-height: 1.6;
-    }
-    
-    /* Role badges for main app */
     .role-badge {
         display: inline-block;
         padding: 6px 16px;
         border-radius: 20px;
-        font-size: 12px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-left: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        background: var(--light-blue);
+        color: var(--primary-blue);
+        border: 1px solid var(--medium-blue);
     }
     
-    .superadmin-badge {
-        background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        color: white;
-    }
-    
-    .admin-badge {
-        background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
-        color: white;
-    }
-    
-    .user-badge {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-    }
-    
-    /* Main app header */
-    .main-header {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 32px;
+    /* ========== NAVIGATION ========== */
+    .nav-section {
+        padding: 0 16px;
         margin-bottom: 32px;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-section-title {
+        font-size: 14px;
+        color: var(--text-light);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 16px;
+        padding-left: 8px;
+    }
+    
+    /* ========== SECTION HEADERS ========== */
+    .section-header {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 32px 0 20px 0;
+        padding-bottom: 12px;
+        border-bottom: 2px solid var(--border-light);
+    }
+    
+    /* ========== TABLES ========== */
+    .dataframe {
+        border: 2px solid var(--border-light);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .dataframe th {
+        background-color: var(--light-blue);
+        color: var(--text-dark);
+        font-weight: 600;
+        border-bottom: 2px solid var(--border-light);
+    }
+    
+    .dataframe td {
+        color: var(--text-medium);
+        border-bottom: 1px solid var(--border-light);
+    }
+    
+    /* ========== EXPANDERS ========== */
+    .stExpander {
+        border: 2px solid var(--border-light);
+        border-radius: 8px;
+        margin: 12px 0;
+    }
+    
+    .stExpander summary {
+        color: var(--text-dark);
+        font-weight: 500;
+        padding: 16px;
+    }
+    
+    /* ========== ALERTS ========== */
+    .stAlert {
+        border-radius: 8px;
+        border-left: 4px solid;
+    }
+    
+    .stSuccess {
+        background-color: #e8f5e9;
+        border-left-color: var(--success);
+        color: #2e7d32;
+    }
+    
+    .stError {
+        background-color: #ffebee;
+        border-left-color: var(--danger);
+        color: #c62828;
+    }
+    
+    .stWarning {
+        background-color: #fff3e0;
+        border-left-color: var(--warning);
+        color: #ef6c00;
+    }
+    
+    .stInfo {
+        background-color: var(--light-blue);
+        border-left-color: var(--primary-blue);
+        color: var(--text-dark);
+    }
+    
+    /* ========== DIVIDERS ========== */
+    hr {
+        border: none;
+        height: 2px;
+        background: var(--border-light);
+        margin: 24px 0;
+    }
+    
+    /* ========== SCROLLBAR ========== */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: var(--bg-light);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: var(--medium-blue);
+        border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--primary-blue);
+    }
+    
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+        .metric-value {
+            font-size: 24px;
+        }
+        
+        .clean-card {
+            padding: 16px;
+        }
+    }
+    
+    /* ========== FIX STREAMLIT CONTAINERS ========== */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Ensure all text is visible */
+    .css-1offfwp p, .css-1offfwp span {
+        color: var(--text-medium) !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# Database functions (same as before)
+# ============================================================================
+# DATABASE
+# ============================================================================
+
 def init_database():
+    """Initialize database with minimal schema"""
     conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
     
-    # Users table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        email TEXT,
         role TEXT NOT NULL,
         created_by INTEGER,
         is_active INTEGER DEFAULT 1,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        last_login TIMESTAMP,
         FOREIGN KEY (created_by) REFERENCES users(id)
     )
     ''')
     
-    # PDFs table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS pdfs (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -252,14 +385,10 @@ def init_database():
         file_path TEXT NOT NULL,
         uploaded_by INTEGER NOT NULL,
         uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        file_size INTEGER,
-        description TEXT,
-        is_public INTEGER DEFAULT 0,
         FOREIGN KEY (uploaded_by) REFERENCES users(id)
     )
     ''')
     
-    # Chat history table
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS chat_history (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -273,355 +402,434 @@ def init_database():
     )
     ''')
     
-    # Permissions table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS permissions (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER NOT NULL,
-        pdf_id INTEGER NOT NULL,
-        permission_type TEXT DEFAULT 'read',
-        granted_by INTEGER,
-        granted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (pdf_id) REFERENCES pdfs(id),
-        FOREIGN KEY (granted_by) REFERENCES users(id)
-    )
-    ''')
-    
-    # Analytics table
-    cursor.execute('''
-    CREATE TABLE IF NOT EXISTS analytics (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        action TEXT NOT NULL,
-        pdf_id INTEGER,
-        details TEXT,
-        timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id),
-        FOREIGN KEY (pdf_id) REFERENCES pdfs(id)
-    )
-    ''')
-    
-    # Create default superadmin if not exists
-    cursor.execute("SELECT * FROM users WHERE username = 'superadmin'")
-    if not cursor.fetchone():
-        # Default password: admin123
+    # Create default superadmin
+    cursor.execute("SELECT COUNT(*) FROM users WHERE username = 'superadmin'")
+    if cursor.fetchone()[0] == 0:
         password_hash = hashlib.sha256('admin123'.encode()).hexdigest()
-        cursor.execute('''
-        INSERT INTO users (username, password_hash, role, email)
-        VALUES (?, ?, ?, ?)
-        ''', ('superadmin', password_hash, 'superadmin', 'superadmin@example.com'))
+        cursor.execute(
+            "INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)",
+            ('superadmin', password_hash, 'superadmin')
+        )
     
     conn.commit()
-    return conn
+    conn.close()
 
-# Authentication functions (same as before)
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
-def verify_password(password, password_hash):
-    return hash_password(password) == password_hash
-
-def login_user(username, password):
-    conn = init_database()
+def verify_login(username, password):
+    conn = sqlite3.connect('database.db', check_same_thread=False)
     cursor = conn.cursor()
     
-    cursor.execute('''
-    SELECT id, username, password_hash, role FROM users 
-    WHERE username = ? AND is_active = 1
-    ''', (username,))
+    cursor.execute(
+        "SELECT id, username, password_hash, role FROM users WHERE username = ? AND is_active = 1",
+        (username,)
+    )
     
     user = cursor.fetchone()
+    conn.close()
     
-    if user and verify_password(password, user[2]):
-        # Update last login
-        cursor.execute('UPDATE users SET last_login = ? WHERE id = ?', 
-                      (datetime.now(), user[0]))
-        conn.commit()
-        conn.close()
-        
+    if user and user[2] == hash_password(password):
         return {
             'id': user[0],
             'username': user[1],
             'role': user[3]
         }
-    
-    conn.close()
     return None
 
-def logout_user():
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
+# ============================================================================
+# AUTHENTICATION
+# ============================================================================
 
-# Updated Login Page with Light Theme
 def show_login_page():
-    load_custom_css()  # Load your style.css
-    load_login_css()   # Load login-specific CSS
+    """Clean, light login page with proper contrast"""
+    load_minimal_css()
     
-    # Main login container
-    st.markdown('<div class="login-page-container">', unsafe_allow_html=True)
-    
+    # Center the login form
     col1, col2, col3 = st.columns([1, 2, 1])
     
     with col2:
+        st.markdown("<div style='height: 60px'></div>", unsafe_allow_html=True)
+        
+        # Header
         st.markdown("""
-        <div class="login-card">
-            <div class="login-header">
-                <div class="login-logo">📚</div>
-                <h1 class="login-title">Chat PDF</h1>
-                <p class="login-subtitle">AI-Powered Document Assistant</p>
-            </div>
-        """, unsafe_allow_html=True)
-        
-        # Login form
-        st.markdown('<div class="login-input">', unsafe_allow_html=True)
-        username = st.text_input("👤 Username", placeholder="Enter your username")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        st.markdown('<div class="login-input">', unsafe_allow_html=True)
-        password = st.text_input("🔒 Password", type="password", placeholder="Enter your password")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Login button
-        st.markdown('<div class="login-button-container">', unsafe_allow_html=True)
-        if st.button("🚪 Sign In", use_container_width=True, type="primary"):
-            if username and password:
-                user = login_user(username, password)
-                if user:
-                    st.session_state.logged_in = True
-                    st.session_state.user_id = user['id']
-                    st.session_state.username = user['username']
-                    st.session_state.role = user['role']
-                    st.rerun()
-                else:
-                    st.error("❌ Invalid username or password")
-            else:
-                st.warning("⚠️ Please enter both username and password")
-        st.markdown('</div>', unsafe_allow_html=True)
-        
-        # Demo credentials
-        with st.expander("📋 Demo Credentials", expanded=True):
-            st.markdown("""
-            <div class="demo-credentials">
-                <h4>SuperAdmin Account</h4>
-                <p><strong>Username:</strong> <code>superadmin</code></p>
-                <p><strong>Password:</strong> <code>admin123</code></p>
-                <p style="margin-top: 12px; font-size: 13px; color: #64748b;">
-                    After login, you can create admin and user accounts from the dashboard.
-                </p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        st.markdown("""
-        <div class="login-footer">
-            <p>© 2024 Chat PDF. All rights reserved.</p>
+        <div style='text-align: center; margin-bottom: 40px;'>
+            <div style='font-size: 56px; color: #1e88e5; margin-bottom: 8px;'>📚</div>
+            <h1 style='font-size: 36px; font-weight: 700; color: #1a237e; margin-bottom: 8px;'>
+                Chat PDF
+            </h1>
+            <p style='color: #5c6bc0; font-size: 18px;'>
+                AI Document Assistant
+            </p>
         </div>
         """, unsafe_allow_html=True)
         
-        st.markdown('</div>', unsafe_allow_html=True)  # Close login-card
+        # Login card
+        with st.container():
+            st.markdown("<div class='clean-card' style='max-width: 400px; margin: 0 auto;'>", unsafe_allow_html=True)
+            
+            st.markdown("<h3 style='color: #1a237e; margin-bottom: 24px;'>Sign In to Continue</h3>", unsafe_allow_html=True)
+            
+            # Login form
+            username = st.text_input("Username", placeholder="Enter your username", key="login_username")
+            password = st.text_input("Password", type="password", placeholder="Enter your password", key="login_password")
+            
+            col_btn1, col_btn2 = st.columns(2)
+            with col_btn1:
+                login_btn = st.button("Sign In", use_container_width=True, type="primary")
+            
+            with col_btn2:
+                if st.button("Clear", use_container_width=True, type="secondary"):
+                    st.rerun()
+            
+            if login_btn:
+                if username and password:
+                    user = verify_login(username, password)
+                    if user:
+                        st.session_state.update({
+                            'logged_in': True,
+                            'user_id': user['id'],
+                            'username': user['username'],
+                            'role': user['role']
+                        })
+                        st.success("✅ Login successful!")
+                        st.rerun()
+                    else:
+                        st.error("❌ Invalid username or password")
+                else:
+                    st.warning("⚠️ Please enter both username and password")
+            
+            # Demo credentials
+            with st.expander("📋 Demo Account", expanded=False):
+                st.markdown("""
+                <div style='padding: 12px; background: #e3f2fd; border-radius: 8px;'>
+                    <strong style='color: #1a237e;'>SuperAdmin Account</strong><br>
+                    • Username: <code>superadmin</code><br>
+                    • Password: <code>admin123</code>
+                </div>
+                <p style='color: #5c6bc0; font-size: 14px; margin-top: 12px;'>
+                    Create admin and user accounts after login
+                </p>
+                """, unsafe_allow_html=True)
+            
+            st.markdown("</div>", unsafe_allow_html=True)
+        
+        # Features section
+        st.markdown("<div style='height: 60px'></div>", unsafe_allow_html=True)
+        st.markdown("<h3 style='text-align: center; color: #1a237e; margin-bottom: 32px;'>Key Features</h3>", unsafe_allow_html=True)
+        
+        features = [
+            ("🤖", "AI-Powered Q&A", "Ask questions and get instant answers from your PDFs"),
+            ("📚", "Document Management", "Organize and manage all your PDF documents"),
+            ("👥", "Multi-Role System", "Different access levels for different users"),
+            ("💬", "Persistent Chat", "Save and revisit all your conversations")
+        ]
+        
+        cols = st.columns(2)
+        for idx, (icon, title, desc) in enumerate(features):
+            with cols[idx % 2]:
+                st.markdown(f"""
+                <div style='margin-bottom: 24px; padding: 16px; background: white; border: 2px solid #bbdefb; border-radius: 12px;'>
+                    <div style='font-size: 28px; color: #1e88e5; margin-bottom: 12px;'>{icon}</div>
+                    <div style='font-weight: 600; color: #1a237e; margin-bottom: 8px;'>{title}</div>
+                    <div style='font-size: 14px; color: #5c6bc0; line-height: 1.5;'>{desc}</div>
+                </div>
+                """, unsafe_allow_html=True)
+
+# ============================================================================
+# SIDEBAR
+# ============================================================================
+
+def render_sidebar():
+    """Light sidebar with blue elements"""
     
-    st.markdown('</div>', unsafe_allow_html=True)  # Close login-page-container
-    
-    # Features showcase
-    st.markdown("""
-    <div class="feature-showcase">
-        <h2 style="text-align: center; color: #1e293b; margin-bottom: 16px;">✨ Powerful Features</h2>
-        <p style="text-align: center; color: #64748b; max-width: 600px; margin: 0 auto 40px;">
-            Everything you need to manage, analyze, and interact with your PDF documents
-        </p>
+    # Sidebar header
+    st.sidebar.markdown("""
+    <div class='sidebar-header'>
+        <div style='font-size: 32px; color: #1e88e5; margin-bottom: 8px;'>📚</div>
+        <h2 style='font-size: 20px; font-weight: 700;'>Chat PDF</h2>
+        <p style='font-size: 14px;'>AI Document Assistant</p>
+    </div>
     """, unsafe_allow_html=True)
     
-    # Feature grid
-    features = [
-        {
-            "icon": "📚",
-            "title": "Smart Document Management",
-            "desc": "Upload, organize, and categorize PDFs with intelligent tagging and search capabilities."
-        },
-        {
-            "icon": "🤖",
-            "title": "AI-Powered Q&A",
-            "desc": "Ask questions about your documents and get instant, accurate answers from advanced AI."
-        },
-        {
-            "icon": "👑",
-            "title": "Role-Based Access Control",
-            "desc": "SuperAdmin, Admin, and User roles with granular permissions and access controls."
-        },
-        {
-            "icon": "📊",
-            "title": "Advanced Analytics",
-            "desc": "Track usage, monitor performance, and gain insights from comprehensive analytics."
-        },
-        {
-            "icon": "💬",
-            "title": "Persistent Chat History",
-            "desc": "Your conversations are saved and easily searchable across all login sessions."
-        },
-        {
-            "icon": "🔒",
-            "title": "Enterprise Security",
-            "desc": "Bank-level security with encrypted storage and secure authentication protocols."
-        }
+    # User info
+    role = st.session_state.get('role', 'user')
+    username = st.session_state.get('username', 'User')
+    
+    role_colors = {
+        'superadmin': {'bg': '#e8eaf6', 'text': '#3f51b5', 'label': 'SuperAdmin'},
+        'admin': {'bg': '#e3f2fd', 'text': '#1976d2', 'label': 'Admin'},
+        'user': {'bg': '#e0f2f1', 'text': '#00796b', 'label': 'User'}
+    }
+    
+    role_color = role_colors.get(role, role_colors['user'])
+    
+    st.sidebar.markdown(f"""
+    <div class='user-info-card'>
+        <div class='username'>{username}</div>
+        <div class='role-badge' style='background: {role_color['bg']}; color: {role_color['text']}; border-color: {role_color['text']}20;'>
+            {role_color['label']}
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Navigation
+    st.sidebar.markdown("<div class='nav-section'>", unsafe_allow_html=True)
+    st.sidebar.markdown("<div class='nav-section-title'>Main Navigation</div>", unsafe_allow_html=True)
+    
+    pages = [
+        ("📊", "Dashboard", "Dashboard"),
+        ("💬", "Chat", "User Chat"),
+        ("📄", "Documents", "My Documents"),
     ]
     
-    st.markdown('<div class="feature-grid">', unsafe_allow_html=True)
-    for feature in features:
-        col1, col2, col3 = st.columns([1, 1, 1])
-        with col1 if features.index(feature) % 3 == 0 else col2 if features.index(feature) % 3 == 1 else col3:
-            st.markdown(f"""
-            <div class="feature-item">
-                <div class="feature-icon">{feature['icon']}</div>
-                <h3 class="feature-title">{feature['title']}</h3>
-                <p class="feature-desc">{feature['desc']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    if role in ['admin', 'superadmin']:
+        pages.append(("📤", "Upload", "Upload PDFs"))
     
-    st.markdown('</div>', unsafe_allow_html=True)  # Close feature-showcase
-
-# Main app function
-def main():
-    # Check if user is logged in
-    if 'logged_in' not in st.session_state:
-        st.session_state.logged_in = False
+    if role == 'superadmin':
+        pages.extend([
+            ("👥", "User Management", "User Management"),
+            ("📈", "Analytics", "Analytics"),
+            ("⚙️", "Settings", "System Settings")
+        ])
     
-    if not st.session_state.logged_in:
-        show_login_page()
-    else:
-        # Import sidebar function from sidebar module
-        from sidebar import render_sidebar
+    for icon, label, page_name in pages:
+        is_active = st.session_state.get('selected_page') == page_name
+        btn_type = "primary" if is_active else "secondary"
         
-        # Load main app CSS
-        load_custom_css()
-        
-        # Render sidebar
-        render_sidebar()
-        
-        # Main content area
-        st.markdown(f"""
-        <div class="main-header">
-            <h1 style="font-size: 32px; margin-bottom: 8px;">Welcome back, {st.session_state.username}!</h1>
-            <p style="font-size: 16px; color: #64748b; margin-bottom: 16px;">
-                You are logged in as: 
-                <span class="role-badge {st.session_state.role}-badge">
-                    {st.session_state.role.upper()}
-                </span>
-            </p>
-            <p style="font-size: 14px; color: #94a3b8;">
-                Last login: Today at {datetime.now().strftime("%I:%M %p")}
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
-        
-        # Get selected page from session state
-        selected_page = st.session_state.get('selected_page', 'Dashboard')
-        
-        # Page routing
-        if selected_page == "Dashboard":
-            show_dashboard()
-        elif selected_page == "User Chat":
-            show_user_chat()
-        elif selected_page == "My Documents":
-            show_my_documents()
-        elif selected_page == "Upload PDFs":
-            show_upload_pdfs()
-        elif selected_page == "User Management":
-            show_user_management()
-        elif selected_page == "Document Library":
-            show_document_library()
-        elif selected_page == "Analytics":
-            show_analytics()
-        elif selected_page == "System Settings":
-            show_system_settings()
-        else:
-            show_dashboard()
+        if st.sidebar.button(
+            f"{icon} {label}",
+            key=f"nav_{page_name}",
+            use_container_width=True,
+            type=btn_type
+        ):
+            st.session_state.selected_page = page_name
+            st.rerun()
+    
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+    
+    # Logout button
+    st.sidebar.markdown("<div style='padding: 0 16px; margin-top: 40px;'>", unsafe_allow_html=True)
+    if st.sidebar.button("🚪 Logout", use_container_width=True, type="secondary"):
+        for key in list(st.session_state.keys()):
+            del st.session_state[key]
+        st.rerun()
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+    
+# ============================================================================
+# DASHBOARD
+# ============================================================================
 
-# Page functions (to be implemented separately)
 def show_dashboard():
-    st.title("📊 Dashboard")
+    """Light dashboard with blue accents"""
+    load_minimal_css()
+    
+    # Welcome header
+    st.markdown(f"""
+    <div style='margin-bottom: 40px;'>
+        <h1 style='font-size: 32px; font-weight: 700; color: #1a237e; margin-bottom: 8px;'>
+            Welcome back, {st.session_state.get('username', 'User')}!
+        </h1>
+        <p style='color: #5c6bc0; font-size: 16px;'>
+            Here's an overview of your documents and recent activity
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Metrics
+    st.markdown("<div class='section-header'>System Overview</div>", unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Total Users", "156", "+12 this month")
+        st.markdown("""
+        <div class='metric-card'>
+            <div style='font-size: 24px; color: #1e88e5; margin-bottom: 12px;'>👥</div>
+            <div class='metric-value'>156</div>
+            <div class='metric-label'>Total Users</div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col2:
-        st.metric("Total PDFs", "342", "+8 this week")
+        st.markdown("""
+        <div class='metric-card'>
+            <div style='font-size: 24px; color: #1e88e5; margin-bottom: 12px;'>📚</div>
+            <div class='metric-value'>342</div>
+            <div class='metric-label'>PDF Documents</div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col3:
-        st.metric("Chat Sessions", "1,234", "+45 today")
+        st.markdown("""
+        <div class='metric-card'>
+            <div style='font-size: 24px; color: #1e88e5; margin-bottom: 12px;'>💬</div>
+            <div class='metric-value'>1,234</div>
+            <div class='metric-label'>Chat Sessions</div>
+        </div>
+        """, unsafe_allow_html=True)
     
     with col4:
-        st.metric("Storage Used", "4.2 GB", "80%")
-    
-    st.markdown("---")
-    
-    col1, col2 = st.columns([2, 1])
-    
-    with col1:
-        st.subheader("📈 Recent Activity")
-        st.write("Activity chart will be displayed here")
-        
-        # Recent chat history
-        st.subheader("💬 Recent Chats")
-        st.write("Recent chat conversations will appear here")
-    
-    with col2:
-        st.subheader("🚀 Quick Actions")
-        
-        if st.button("💬 Start New Chat", use_container_width=True):
-            st.session_state.selected_page = "User Chat"
-            st.rerun()
-        
-        if st.button("📤 Upload PDF", use_container_width=True):
-            st.session_state.selected_page = "Upload PDFs"
-            st.rerun()
-        
-        if st.session_state.role == "superadmin":
-            if st.button("👥 Manage Users", use_container_width=True):
-                st.session_state.selected_page = "User Management"
-                st.rerun()
-            
-            if st.button("📊 View Analytics", use_container_width=True):
-                st.session_state.selected_page = "Analytics"
-                st.rerun()
+        st.markdown("""
+        <div class='metric-card'>
+            <div style='font-size: 24px; color: #1e88e5; margin-bottom: 12px;'>💾</div>
+            <div class='metric-value'>4.2 GB</div>
+            <div class='metric-label'>Storage Used</div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ============================================================================
+# OTHER PAGES
+# ============================================================================
 
 def show_user_chat():
-    st.title("💬 User Chat")
-    st.info("Chat interface will be implemented in the next file")
+    """Chat interface page"""
+    st.title("💬 Chat")
+    st.markdown("Chat with your PDF documents using AI")
     
     # Placeholder for chat interface
-    st.write("This is where users can chat with their PDF documents.")
-    st.write("Features to be implemented:")
-    st.write("- PDF selection")
-    st.write("- AI-powered Q&A")
-    st.write("- Chat history")
-    st.write("- File upload for chat")
+    with st.container():
+        st.info("Chat interface will be implemented here")
 
 def show_my_documents():
-    st.title("📄 My Documents")
-    st.write("Your uploaded documents will appear here.")
+    """Documents page"""
+    st.title("📄 Documents")
+    st.markdown("Manage your uploaded PDF files")
+    
+    # Placeholder for document management
+    with st.container():
+        st.info("Document management interface will be implemented here")
 
 def show_upload_pdfs():
+    """Upload page"""
     st.title("📤 Upload PDFs")
-    st.write("PDF upload interface will be implemented here.")
+    st.markdown("Upload new PDF documents to the system")
+    
+    with st.container():
+        uploaded_file = st.file_uploader("Choose a PDF file", type="pdf")
+        if uploaded_file is not None:
+            st.success(f"File '{uploaded_file.name}' uploaded successfully")
+            # Add upload logic here
 
 def show_user_management():
+    """User management page"""
     st.title("👥 User Management")
-    st.write("User management interface for superadmin.")
-
-def show_document_library():
-    st.title("📑 Document Library")
-    st.write("Complete document library for superadmin.")
+    st.markdown("Manage user accounts and permissions")
+    
+    # Only superadmin can access
+    if st.session_state.get('role') != 'superadmin':
+        st.error("Access denied. Superadmin only.")
+        return
+    
+    with st.container():
+        # Add user form
+        with st.form("add_user_form"):
+            col1, col2 = st.columns(2)
+            with col1:
+                new_username = st.text_input("Username")
+                new_password = st.text_input("Password", type="password")
+            with col2:
+                new_role = st.selectbox("Role", ["user", "admin"])
+                new_email = st.text_input("Email (optional)")
+            
+            if st.form_submit_button("Add User", type="primary"):
+                st.success(f"User '{new_username}' added successfully")
+        
+        # User list
+        st.markdown("<div class='section-header'>User List</div>", unsafe_allow_html=True)
+        
+        users = [
+            ("superadmin", "superadmin", "Active"),
+            ("admin1", "admin", "Active"),
+            ("user1", "user", "Active"),
+            ("user2", "user", "Inactive")
+        ]
+        
+        for username, role, status in users:
+            col1, col2, col3, col4 = st.columns([2, 1, 1, 1])
+            with col1:
+                st.text(username)
+            with col2:
+                st.text(role)
+            with col3:
+                st.text(status)
+            with col4:
+                if username != "superadmin":
+                    st.button("Edit", key=f"edit_{username}")
 
 def show_analytics():
+    """Analytics page"""
     st.title("📈 Analytics")
-    st.write("System analytics and reports.")
+    st.markdown("System usage statistics and reports")
+    
+    if st.session_state.get('role') not in ['superadmin', 'admin']:
+        st.error("Access denied. Admin or Superadmin only.")
+        return
+    
+    with st.container():
+        st.info("Analytics dashboard will be implemented here")
 
 def show_system_settings():
-    st.title("⚙️ System Settings")
-    st.write("System configuration and settings.")
+    """Settings page"""
+    st.title("⚙️ Settings")
+    st.markdown("System configuration and settings")
+    
+    if st.session_state.get('role') != 'superadmin':
+        st.error("Access denied. Superadmin only.")
+        return
+    
+    with st.container():
+        st.info("System settings will be implemented here")
+
+# ============================================================================
+# MAIN APP
+# ============================================================================
+
+def main():
+    """Main application"""
+    
+    # Initialize database
+    init_database()
+    
+    # Initialize session state
+    if 'logged_in' not in st.session_state:
+        st.session_state.logged_in = False
+    if 'selected_page' not in st.session_state:
+        st.session_state.selected_page = 'Dashboard'
+    
+    # Check authentication
+    if not st.session_state.logged_in:
+        show_login_page()
+        return
+    
+    # Load minimal CSS
+    load_minimal_css()
+    
+    # Render sidebar
+    render_sidebar()
+    
+    # Render selected page
+    selected_page = st.session_state.get('selected_page', 'Dashboard')
+    
+    if selected_page == 'Dashboard':
+        show_dashboard()
+    elif selected_page == 'User Chat':
+        show_user_chat()
+    elif selected_page == 'My Documents':
+        show_my_documents()
+    elif selected_page == 'Upload PDFs':
+        show_upload_pdfs()
+    elif selected_page == 'User Management':
+        show_user_management()
+    elif selected_page == 'Analytics':
+        show_analytics()
+    elif selected_page == 'System Settings':
+        show_system_settings()
+    else:
+        show_dashboard()
+
+# ============================================================================
+# RUN APP
+# ============================================================================
 
 if __name__ == "__main__":
     main()
